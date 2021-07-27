@@ -6,6 +6,7 @@ import {
 } from 'recoil';
 import {
     todoListState,
+    filteredTodoListState,
 } from '../../../recoil';
 
 /**
@@ -22,7 +23,8 @@ import {
  * 
  */
 export function TodoList() {
-    const todoList = useRecoilValue(todoListState);
+    // const todoList = useRecoilValue(todoListState);
+    const todoList = useRecoilValue(filteredTodoListState);
   
     return (
       <>
