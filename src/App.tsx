@@ -31,6 +31,10 @@ export default function App({children}: {children?: ReactNode}) {
 
   const [
     sortWorker,
+    { 
+      status: sortStatus, 
+      kill: killSortWorker, 
+    }
   ] = useWorker(sortNumbers);
 
   const [result, setResult] = useState<number[]>([]);
@@ -44,10 +48,10 @@ export default function App({children}: {children?: ReactNode}) {
     <RecoilRoot>
       <pre>
         {JSON.stringify(WORKER_STATUS, null, 4)}
-        {JSON.stringify(result, null, 4)}
+        {JSON.stringify(result.slice(0, 100), null, 4)}
       </pre>
       <button type="button" onClick={runSort}>
-        Run Sort
+        Run Sort: {sortStatus}
       </button>
       <div className="App">
         <TodoList />
