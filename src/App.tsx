@@ -48,7 +48,6 @@ export default function App({children}: {children?: ReactNode}) {
   return (
     <RecoilRoot>
       <pre>
-        {JSON.stringify(WORKER_STATUS, null, 4)}
         {JSON.stringify(result.slice(0, 100), null, 4)}
       </pre>
       <button type="button" onClick={runSort}>
