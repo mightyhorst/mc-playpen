@@ -3,7 +3,7 @@ import {
 } from 'recoil';
 import {
     todoListStatsState,
-} from '../../recoil';
+} from '../../../recoil';
 
 export function TodoListStats() {
     const {

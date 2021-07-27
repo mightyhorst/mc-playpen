@@ -11,7 +11,7 @@ import {
  * @requires RecoilJs
  */
 import { useSetRecoilState } from 'recoil';
-import { todoListState } from '../../recoil';
+import { todoListState } from '../../../recoil';
 
 export function TodoItemCreator() {
     const [inputValue, setInputValue] = useState<string>('');

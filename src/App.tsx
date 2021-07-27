@@ -21,6 +21,7 @@ import {
  */
 import {
   TodoList,
+  MonacoEditor,
 } from './components';
 
 
@@ -55,6 +56,7 @@ export default function App({children}: {children?: ReactNode}) {
       </button>
       <div className="App">
         <TodoList />
+        <MonacoEditor />
       </div>
     </RecoilRoot>
   );

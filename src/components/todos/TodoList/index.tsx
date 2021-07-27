@@ -6,7 +6,7 @@ import {
 } from 'recoil';
 import {
     todoListState,
-} from '../../recoil';
+} from '../../../recoil';
 
 /**
  * @requires Components
@@ -16,7 +16,7 @@ import {
     TodoItem,
     TodoListStats,
     TodoListFilters,
-} from '../../components';
+} from '../';
 
 /**
  * 

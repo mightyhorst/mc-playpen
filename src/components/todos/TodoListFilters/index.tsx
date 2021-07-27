@@ -4,7 +4,7 @@ import {
 
 import {
     todoListFilterState,
-} from '../../recoil';
+} from '../../../recoil';
 
 export function TodoListFilters() {
     const [filter, setFilter] = useRecoilState(todoListFilterState);
