@@ -1,11 +1,28 @@
-import {ReactNode} from 'react';
+import {ReactNode, useEffect, useState} from 'react';
 import "./styles.css";
 
+/**
+ * 
+ */
+import {
+  RecoilRoot,
+} from 'recoil';
+
+/**
+ * @requires Components
+ */
+import {
+  TodoList,
+} from './components';
+
+
 export default function App({children}: {children?: ReactNode}) {
+
   return (
-    <div className="App">
-      <h1>mc playpen</h1>
-      <h2>Start editing to see some magic happen!</h2>
-    </div>
+    <RecoilRoot>
+      <div className="App">
+        <TodoList />
+      </div>
+    </RecoilRoot>
   );
 }
