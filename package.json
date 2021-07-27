@@ -5,6 +5,7 @@
   "keywords": [],
   "main": "src/index.tsx",
   "dependencies": {
+    "@koale/useworker": "4.0.2",
     "@types/node": "16.4.3",
     "@types/recoil": "0.0.9",
     "react": "17.0.2",
