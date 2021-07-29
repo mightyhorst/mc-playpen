@@ -22,15 +22,11 @@ export const Timeline = styled.section`
 export const PlaybarContainer = styled.div`
     display: block;
     position: relative;
-    /* top: calc(50% - 5px); */
-    /*   left: 10px; */
     flex: 0 0 calc(100% - 40px);
     width: calc(100% - 40px);
     height: 10px;
     background: rgba(0, 0, 0, 0.2);
     border: 1px solid rgba(0, 0, 0, 0.01);
-    /*   box-shadow: inset 1px 1px 2px rgba(0,0,0,.4); */
-    /*   overflow: hidden; */
     border-radius: 20px;
     cursor: pointer;
 `;
