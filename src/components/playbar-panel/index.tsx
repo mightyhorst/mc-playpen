@@ -73,7 +73,7 @@ export function PlaybarPanel(props: PlaybarPanelProps){
                 />
                 <Handle ref={handleRef} 
                     style={{
-                        left: (left - 2) + '%',
+                        left: `calc(${left}% - 5px)`,
                     }}
                 />
             </PlaybarContainer>

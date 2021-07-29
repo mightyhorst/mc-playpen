@@ -2,7 +2,7 @@ import styled from '@emotion/styled'
 
 export const Timeline = styled.section`
     display: flex;
-    display: block;
+    /* display: block; */
     width: 100%;
     height: 60px;
     position: relative;
@@ -22,7 +22,7 @@ export const Timeline = styled.section`
 export const PlaybarContainer = styled.div`
     display: block;
     position: relative;
-      top: calc(50% - 5px);
+    /* top: calc(50% - 5px); */
     /*   left: 10px; */
     flex: 0 0 calc(100% - 40px);
     width: calc(100% - 40px);
@@ -41,11 +41,11 @@ export const Playbar = styled.div`
     height: 100%;
     background: rgba(0, 180, 240, 0.7);
     box-shadow: inset 0px 0px 1px rgba(0, 0, 0, 0.9);
-    border-radius: 22px;
+    border-radius: 20px 0 0 20px;
     width: 0%;
     &.notSliding{
         /* transition: width 0.16s linear; */
-        transition: width 0.16s linear, background 0.5s;
+        transition: width 0.16s linear, background 1s linear;
     }
     &.notSliding:hover{
         background: rgba(0, 180, 240, 1);
@@ -54,7 +54,6 @@ export const Playbar = styled.div`
 
 export const Handle = styled.div`
     position: absolute;
-    /* left: calc(100% - 5px); */
     left: 0px;
     top: -3px;
     display: block;
@@ -63,5 +62,4 @@ export const Handle = styled.div`
     width: 15px;
     border: 1px solid rgba(255, 255, 255, 0.9);
     background: rgba(255, 255, 255, 0.8);
-    /*   transition: all 0.16s; */
 `;
