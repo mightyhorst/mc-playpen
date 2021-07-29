@@ -1,5 +1,6 @@
 import { 
     RefObject, 
+    useCallback, 
     useEffect, 
     useState, 
 } from 'react';
@@ -11,44 +12,48 @@ import {
  */
 function findPercentageOnDrag(dragObj: HTMLElement, left: number) {
     const parent = dragObj.parentElement;
-    const parentRect = parent.getBoundingClientRect();
-    const parentWidth = parentRect.width;
-    const percentage = left / parentWidth;
-    console.log(percentage * 100 + '%');
-    return percentage;
+    if(parent){
+        const parentRect = parent.getBoundingClientRect();
+        const parentWidth = parentRect.width;
+        const percentage = left / parentWidth;
+        console.log(percentage * 100 + '%');
+        return percentage;
+    }
+    else throw new Error('I cannot find the parent');
 }
 
 /**
- * @hook useSlider
+ * @hook useScrub
  * @param {RefObject<HTMLElement>} handle - 
  * @param {RefObject<HTMLElement>} playbar - 
  */
-export function useSlider({
+export function useScrub({
     isHorizontal = true,
     handle,
     playbar
 }: {
-    isHorizontal: boolean,
+    isHorizontal?: boolean,
     handle: RefObject<HTMLElement>;
     playbar: RefObject<HTMLElement>;
 }): {
     isDragging: boolean,
     percentage: number,
 }{
-    let dragObj:HTMLElement = null;
+    // let dragObj:HTMLElement|null = null;
+    const [dragObj, setDragObj] = useState<HTMLElement|null>(null);
     const [isDragging, setIsDragging] = useState<boolean>(false);
     const [percentage, setPercentage] = useState<number>(0);
-    const [xOffset, setXOffset] = useState<number>(null);
-    const [yOffset, setYOffset] = useState<number>(null);
+    const [xOffset, setXOffset] = useState<number>(0);
+    const [yOffset, setYOffset] = useState<number>(0);
 
     /** 
      * @desc Drag object 
      */
-    function dragObject(e: MouseEvent | TouchEvent) {
+    const dragObject = useCallback((e: MouseEvent | TouchEvent) => {
         e.preventDefault();
         e.stopPropagation();
 
-        let _left:number = 0;
+        let _clientX:number = 0;
 
         /** 
          * @step if there is no object being dragged then do nothing
@@ -61,15 +66,17 @@ export function useSlider({
             /** 
              * @step adjust location of dragged object so doesn't jump to mouse position
              */
-            _left = mouseEvent.clientX - xOffset;
+            _clientX = mouseEvent.clientX;
         } 
         else if (e.type === 'touchmove') {
             const touchEvent: TouchEvent = <TouchEvent> e;
             /**
              * @step adjust location of dragged object so doesn't jump to mouse position
              */
-            _left = touchEvent.targetTouches[0].clientX - xOffset;
+            _clientX = touchEvent.targetTouches[0].clientX ;
         }
+
+        let _left:number = _clientX - xOffset;
 
         /**
          * @step convert left px to percentage
@@ -83,22 +90,24 @@ export function useSlider({
             dragObj.style.left = _percentage * 100 + '%';
             setPercentage(_percentage);
         }
-    }
+    }, [dragObj, xOffset]);
 
     /**
      * @desc sets offset parameters and starts listening for mouse-move
      */
-    function startDrag(e: MouseEvent | TouchEvent) {
+    const startDrag = useCallback((e: MouseEvent | TouchEvent) => {
         e.preventDefault();
         e.stopPropagation();
 
         setIsDragging(true);
 
-        dragObj = e.target as HTMLElement;
-        dragObj.style.position = 'absolute';
+        const _dragObj = e.target as HTMLElement;
+        setDragObj(_dragObj);
+        _dragObj.style.position = 'absolute';
 
-        const rect = dragObj.getBoundingClientRect();
-        const parent = dragObj.parentElement;
+        const rect = _dragObj.getBoundingClientRect();
+        const parent = _dragObj.parentElement;
+        if(!parent) throw new Error('No parent for the dragObj');
         const parentRect = parent.getBoundingClientRect();
 
         if (e.type === 'mousedown') {
@@ -131,15 +140,23 @@ export function useSlider({
             window.addEventListener('touchmove', dragObject, false);
 
         }
-    }
+    }, [dragObject, isHorizontal]);
 
-    handle.current.addEventListener('mousedown', startDrag, false);
-    handle.current.addEventListener('touchstart', startDrag, false);
+    useEffect(()=>{
+        if(handle.current){
+            handle.current.addEventListener('mousedown', startDrag, false);
+            handle.current.addEventListener('touchstart', startDrag, false);
+        }
+    }, [handle, startDrag]);
     
 
-    function setProgressBarWidth(percentage) {
-        playbar.current.style.width = percentage * 100 + '%';
-        handle.current.style.left = `calc(100% - 5px)`;
+    function setProgressBarWidth(percentage: number) {
+        if(playbar.current){
+            playbar.current.style.width = percentage * 100 + '%';
+        }
+        if(handle.current){
+            handle.current.style.left = `calc(100% - 5px)`;
+        }
     }
 
     /** 
@@ -149,7 +166,8 @@ export function useSlider({
     document.onmouseup = function (e) {
         if (dragObj) {
             setIsDragging(false);
-            dragObj = null;
+            // dragObj = null;
+            setDragObj(null);
             window.removeEventListener('mousemove', dragObject, false);
             window.removeEventListener('touchmove', dragObject, false);
             
