@@ -1,0 +1,92 @@
+* {
+    padding: 0;
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+    box-sizing: border-box;
+}
+body {
+    background: #32393f;
+    color: white;
+    display: block;
+    width: 100vw;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+#TIMELINE {
+    display: flex;
+    width: 100%;
+    height: 60px;
+    position: relative;
+    top: 0px;
+    left: 0px;
+    background: rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    color: white;
+    overflow: hidden;
+    align-items: center;
+    justify-content: space-around;
+    /*   padding: 0 1%; */
+    padding: 0 0%;
+    box-sizing: border-box;
+}
+.playbar-container {
+    display: block;
+    position: relative;
+    /*   top: calc(50% - 5px); */
+    /*   left: 10px; */
+    flex: 0 0 calc(100% - 40px);
+    width: calc(100% - 40px);
+    height: 10px;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(0, 0, 0, 0.01);
+    /*   box-shadow: inset 1px 1px 2px rgba(0,0,0,.4); */
+    /*   overflow: hidden; */
+    border-radius: 20px;
+    cursor: pointer;
+}
+.PLAYBAR {
+    position: relative;
+    left: 0;
+    height: 100%;
+    background: rgba(0, 180, 240, 0.7);
+    /*     background: rgba(255,255,255,.7); */
+    /*     border: 1px solid rgba(0,0,0,.3); */
+    box-shadow: inset 0px 0px 1px rgba(0, 0, 0, 0.9);
+    border-radius: 22px;
+    transition: width 0.16s linear;
+    transition: width 0.16s linear, background 0.5s;
+    width: 0%;
+}
+.PLAYBAR:hover {
+    background: rgba(0, 180, 240, 1);
+    transition: none;
+}
+.HANDLE {
+    position: absolute;
+    left: calc(100% - 5px);
+    top: -3px;
+    display: block;
+    border-radius: 50%;
+    height: 15px;
+    width: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.8);
+    /*   transition: all 0.16s; */
+}
+
+#EDITOR {
+    display: block;
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    top: 0px;
+    left: 0px;
+    background: #32393f;
+    color: white;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    font-family: courier new;
+    font-weight: 500;
+    font-size: 16px;
+    white-space: pre;
+}

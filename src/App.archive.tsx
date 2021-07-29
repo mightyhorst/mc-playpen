@@ -1,5 +1,5 @@
 import {ReactNode, useEffect, useState} from 'react';
-import './styles.css';
+import "./styles.css";
 
 /**
  * @requires WebWorkers
@@ -20,9 +20,8 @@ import {
  * @requires Components
  */
 import {
-  // TodoList,
+  TodoList,
   MonacoEditor,
-  PlaybarPanel,
 } from './components';
 
 
@@ -48,8 +47,14 @@ export default function App({children}: {children?: ReactNode}) {
 
   return (
     <RecoilRoot>
+      <pre>
+        {JSON.stringify(result.slice(0, 100), null, 4)}
+      </pre>
+      <button type="button" onClick={runSort}>
+        Run Sort: {sortStatus}
+      </button>
       <div className="App">
-        <PlaybarPanel />
+        <TodoList />
         <MonacoEditor />
       </div>
     </RecoilRoot>
