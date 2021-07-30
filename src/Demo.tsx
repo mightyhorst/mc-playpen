@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useState, useMemo, } from 'react';
 import { 
     useRafLoop, 
     useUpdate, 
 } from './hooks';
 
 export const Demo = () => {
-    const [ticks, setTicks] = useState(0);
+    // const [ticks, setTicks] = useState(0);
     // const [lastCall, setLastCall] = useState(0);
     const [start, setStart] = useState(Date.now());
     const [currentTime, setCurrentTime] = useState(0);
@@ -17,7 +17,7 @@ export const Demo = () => {
     const [loopStop, loopStart, isActive] = useRafLoop((time: number) => {
         const now = Date.now();
         setCurrentTime(now - start);
-        setTicks((ticks) => ticks + 1);
+        // setTicks((ticks) => ticks + 1);
         // setLastCall(time);
 
         if (currentTime >= duration) {
@@ -28,11 +28,28 @@ export const Demo = () => {
         }
     }, false);
 
+    const btnStop = useMemo(()=>{
+        return (
+            <button
+                onClick={() => {
+                    if (isActive()) {
+                        loopStop();
+                    } 
+                    else {
+                        setStart(Date.now());
+                    }
+                    setCurrentTime(0);
+                    setIsFinished(false);
+                    update();
+                }}
+            >
+                STOP
+            </button>
+        );
+    }, [isActive, loopStop, update]);
+
     return (
         <div>
-            {/* <div>RAF triggered: {ticks} (times)</div> */}
-            {/* <div>Last high res timestamp: {lastCall}</div> */}
-            {/* <div>start: {start}</div> */}
             <div>duration: {duration}</div>
             <div>currentTime: {currentTime}</div>
             <br />
@@ -58,7 +75,7 @@ export const Demo = () => {
             >
                 {isActive() ? 'PAUSE' : 'START'}
             </button>
-            <button
+            {/* <button
                 onClick={() => {
                     if (isActive()) {
                         loopStop();
@@ -72,8 +89,9 @@ export const Demo = () => {
                 }}
             >
                 {isActive() ? 'STOP' : '......'}
-            </button>
-            <p>{isActive() ? 'playing...' : 'paused'}</p>
+            </button> */}
+            {isActive() && btnStop}
+            <p>{isActive() ? 'playing...' : isFinished ? 'finished' : 'paused'}</p>
             <p>{msg}</p>
         </div>
     );
