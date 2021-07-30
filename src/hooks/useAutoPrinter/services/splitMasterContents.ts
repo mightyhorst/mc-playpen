@@ -1,4 +1,4 @@
-import {IMasterContents} from './models';
+import {IMasterContents} from '../models';
 import {hbsRegex} from './hbsRegex';
 
 /**
