@@ -1,9 +1,12 @@
 import { useState } from 'react';
-import { useRafLoop, useUpdate } from './hooks';
+import { 
+    useRafLoop, 
+    useUpdate, 
+} from './hooks';
 
 export const Demo = () => {
     const [ticks, setTicks] = useState(0);
-    const [lastCall, setLastCall] = useState(0);
+    // const [lastCall, setLastCall] = useState(0);
     const [start, setStart] = useState(Date.now());
     const [currentTime, setCurrentTime] = useState(0);
     const [isFinished, setIsFinished] = useState(false);
@@ -15,7 +18,7 @@ export const Demo = () => {
         const now = Date.now();
         setCurrentTime(now - start);
         setTicks((ticks) => ticks + 1);
-        setLastCall(time);
+        // setLastCall(time);
 
         if (currentTime >= duration) {
             loopStop();
@@ -62,7 +65,6 @@ export const Demo = () => {
                     } 
                     else {
                         setStart(Date.now());
-                    //     loopStart();
                     }
                     setCurrentTime(0);
                     setIsFinished(false);
@@ -71,7 +73,7 @@ export const Demo = () => {
             >
                 {isActive() ? 'STOP' : '......'}
             </button>
-            <p>{isActive() ? 'active' : 'not active'}</p>
+            <p>{isActive() ? 'playing...' : 'paused'}</p>
             <p>{msg}</p>
         </div>
     );
