@@ -1,7 +1,6 @@
 import {
-    splitMasterContents,
-    splitMasterContentsWithRowsAndCols,
-} from './splitMasterContents';
+    splitMasterContentsWithRanges,
+} from '..';
 
 const masterContents = `class Hello{
     {{partial01}}
@@ -22,49 +21,11 @@ const masterContents = `class Hello{
   
   }
 }`;
-const partials = [
-{
-  id: 'partial01',
-  contents: `  partial01(){
-      console.log('hello from partial 01');
-  }`,
-},
-  {
-  id: 'partial02',
-  contents: `  partial02(){
-      console.log('hello from partial 02');
-  }`,
-},
-  {
-  id: 'partial03',
-  contents: `  partial03(){
-      console.log('hello from partial 03');
-  }`,
-},
-];
 
-
-describe('splitMasterContents', ()=>{
-    it('splitMasterContents', ()=>{
+describe('useAutoPrinter', ()=>{
+    it('splitMasterContentsWithRanges', ()=>{
         
-        const masterContentsArr = splitMasterContents(masterContents);
-
-        expect(masterContentsArr[0].text.trim()).toEqual(`class Hello{`);
-        expect(masterContentsArr[0].isPartial).toBe(false);
-
-        expect(masterContentsArr[1].text.trim()).toEqual(`{{partial01}}`);
-        expect(masterContentsArr[1].isPartial).toBe(true);
-        
-        expect(masterContentsArr[3].text.trim()).toEqual(`{{partial02}}`);
-        expect(masterContentsArr[3].isPartial).toBe(true);
-        
-        expect(masterContentsArr[5].text.trim()).toEqual(`{{partial03}}`);
-        expect(masterContentsArr[5].isPartial).toBe(true);
-
-    });
-    it('splitMasterContentsWithRowsAndCols', ()=>{
-        
-        const masterContentsArr = splitMasterContentsWithRowsAndCols(masterContents);
+        const masterContentsArr = splitMasterContentsWithRanges(masterContents);
         const arr = masterContentsArr.map(t => ({...t, text: t.text.trim().split('\n').join('')}));
         console.log({arr});
         expect(arr).toEqual([
