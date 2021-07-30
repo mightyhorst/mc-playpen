@@ -7,7 +7,7 @@ import {
 } from '..';
 
 const masterContents = `class Hello{
-    {{partial01}}
+  {{partial01}}
   
   method(){
   
@@ -40,7 +40,7 @@ const partials:IPartial[] = [
   fileName: '',
   filePath: '',
   contents: '',
-  compiledContent: `  partial02(){
+  compiledContent: `partial02(){
       console.log('hello from partial 02');
   }`,
 },
@@ -49,7 +49,7 @@ const partials:IPartial[] = [
   fileName: '',
   filePath: '',
   contents: '',
-  compiledContent: `  partial03(){
+  compiledContent: `partial03(){
       console.log('hello from partial 03');
   }`,
 },
@@ -78,7 +78,7 @@ const checks = [
 }`
 ];
 const txtCompiled = `class Hello{
-    partial01(){
+  partial01(){
       console.log('hello from partial 01');
   }
   
@@ -86,7 +86,7 @@ const txtCompiled = `class Hello{
   
   }
   
-    partial02(){
+  partial02(){
       console.log('hello from partial 02');
   }
   
@@ -94,7 +94,7 @@ const txtCompiled = `class Hello{
   
   }
   
-    partial03(){
+  partial03(){
       console.log('hello from partial 03');
   }
   
