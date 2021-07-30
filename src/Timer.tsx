@@ -4,7 +4,7 @@ import {
     useUpdate, 
 } from './hooks';
 
-export const Demo = () => {
+export const Timer = () => {
     // const [ticks, setTicks] = useState(0);
     // const [lastCall, setLastCall] = useState(0);
     const [start, setStart] = useState(Date.now());

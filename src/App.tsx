@@ -24,7 +24,7 @@ import {
   MonacoEditor,
   PlaybarPanel,
 } from './components';
-import {Demo} from './Demo';
+import {Timer} from './Timer';
 
 
 const numbers = [...Array(5000000)].map(e => ~~(Math.random() * 1000000));
@@ -54,6 +54,6 @@ export default function App({children}: {children?: ReactNode}) {
     //     <MonacoEditor />
     //   </div>
     // </RecoilRoot>
-    <Demo />
+    <Timer />
   );
 }
