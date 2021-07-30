@@ -34,7 +34,7 @@ export const Demo = () => {
                 onClick={() => {
                     if (isActive()) {
                         loopStop();
-                    } 
+                    }
                     else {
                         setStart(Date.now());
                     }
@@ -75,21 +75,6 @@ export const Demo = () => {
             >
                 {isActive() ? 'PAUSE' : 'START'}
             </button>
-            {/* <button
-                onClick={() => {
-                    if (isActive()) {
-                        loopStop();
-                    } 
-                    else {
-                        setStart(Date.now());
-                    }
-                    setCurrentTime(0);
-                    setIsFinished(false);
-                    update();
-                }}
-            >
-                {isActive() ? 'STOP' : '......'}
-            </button> */}
             {isActive() && btnStop}
             <p>{isActive() ? 'playing...' : isFinished ? 'finished' : 'paused'}</p>
             <p>{msg}</p>
