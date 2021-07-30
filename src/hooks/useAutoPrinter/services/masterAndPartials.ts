@@ -49,8 +49,6 @@ export function masterAndPartials({
         else{
             return masterPiece.text;
         }
-
-        
     });
 
     return masterAndPartials;
