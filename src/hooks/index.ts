@@ -1,3 +1,2 @@
-export * from './usePlay';
 export * from './react-use';
-
+export * from './usePrinter';

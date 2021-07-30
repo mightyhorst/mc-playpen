@@ -1,10 +1,87 @@
 import { useState, useMemo, } from 'react';
 import { 
-    useRafLoop, 
-    useUpdate, 
+    useRafLoop,
+    useUpdate,
+    usePrinter,
 } from './hooks';
+import {
+    IMaster,
+    IPartial,
+} from './models';
 
-export const Timer = () => {
+const txtMaster = `class Hello{
+    {{partial01}}
+  
+  method(){
+  
+  }
+  
+  {{partial02}}
+  
+  help(){
+  
+  }
+  
+  {{partial03}}
+  
+  something(){
+  
+  }
+}`;
+const txtMasterCompiled = txtMaster;
+
+export function TimerContainer(){
+    const master: IMaster<{className:string}> = {
+        fileName: 'template.hbs', 
+        filePath: 'cat01/scene01/step01', 
+        contents: txtMaster, 
+        compiledContent: txtMasterCompiled,
+        data: {
+            className: 'Hello',
+        },
+    };
+    const partials: IPartial<{}>[] = [
+        {
+            partialId: 'partial01',
+            fileName: '',
+            filePath: '',
+            contents: ``,
+            compiledContent: `partial01(){
+                console.log('hello from partial 01');
+            }`,
+            data: {}
+        },
+        {
+            partialId: 'partial02',
+            fileName: '',
+            filePath: '',
+            contents: ``,
+            compiledContent: `partial02(){
+                console.log('hello from partial 02');
+            }`,
+            data: {}
+        },
+        {
+            partialId: 'partial03',
+            fileName: '',
+            filePath: '',
+            contents: ``,
+            compiledContent: `partial03(){
+                console.log('hello from partial 03');
+            }`,
+            data: {}
+        },
+    ];
+    const {} = usePrinter({
+        master,
+        partials,
+    });
+    return (<>
+
+    </>);
+}
+
+export function Timer(){
     // const [ticks, setTicks] = useState(0);
     // const [lastCall, setLastCall] = useState(0);
     const [start, setStart] = useState(Date.now());
