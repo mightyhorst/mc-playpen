@@ -1,16 +1,5 @@
-interface IMasterContents {
-    isPartial: boolean;
-    text: string;
-    startRow?: number;
-    endRow?: number;
-    startCol?: number;
-    endCol?: number;
-}
-
-/**
- * @constant {RegExp} regex - handlebars finder
- */
-export const regex: RegExp = /(\{\{[\s]*.*?[\s]*\}\})/g;
+import {IMasterContents} from './models';
+import {hbsRegex} from './hbsRegex';
 
 /**
  * @function splitMasterContents
@@ -19,9 +8,9 @@ export const regex: RegExp = /(\{\{[\s]*.*?[\s]*\}\})/g;
  */
 export function splitMasterContents(masterContents: string): IMasterContents[] {
     let masterContentsSplit: IMasterContents[] = masterContents
-        .split(regex)
+        .split(hbsRegex)
         .map((text, index) => {
-            const isPartial = text.search(regex) >= 0;
+            const isPartial = text.search(hbsRegex) >= 0;
             return {
                 isPartial,
                 text
