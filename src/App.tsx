@@ -24,6 +24,7 @@ import {
   MonacoEditor,
   PlaybarPanel,
 } from './components';
+import {Demo} from './Demo';
 
 
 const numbers = [...Array(5000000)].map(e => ~~(Math.random() * 1000000));
@@ -47,11 +48,12 @@ export default function App({children}: {children?: ReactNode}) {
   };
 
   return (
-    <RecoilRoot>
-      <div className="App">
-        <PlaybarPanel />
-        <MonacoEditor />
-      </div>
-    </RecoilRoot>
+    // <RecoilRoot>
+    //   <div className="App">
+    //     <PlaybarPanel />
+    //     <MonacoEditor />
+    //   </div>
+    // </RecoilRoot>
+    <Demo />
   );
 }
