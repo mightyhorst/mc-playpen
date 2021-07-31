@@ -86,7 +86,9 @@ export function Editor({percentage}: {percentage:number}){
     // setCompiled(factory(1).map(t=>t.text).join(''))
 
     return (<>
-        <pre>
+        <pre style={{
+            transition: 'all .1s',
+        }}>
             {compiled}
         </pre>
     </>);
@@ -100,7 +102,7 @@ export default function Timer(){
     const [currentTime, setCurrentTime] = useState(0);
     const [isFinished, setIsFinished] = useState(false);
     const [msg, setMsg] = useState('');
-    const duration = 5000;
+    const duration = 2000;
     const update = useUpdate();
 
     const [loopStop, loopStart, isActive] = useRafLoop((time: number) => {
