@@ -5,3 +5,4 @@ export * from './splitMasterContentsWithRanges';
 export * from './percentageOfPartial';
 export * from './masterAndPartials';
 export * from './masterAndPartialsFactory';
+export * from './getRanges';

@@ -7,12 +7,12 @@
 export function percentageOfPartial({ 
     txtPartial, 
     endPercentage, 
-    startPercentage, 
+    startPercentage = 0, 
 }:{
     txtPartial: string;
     endPercentage: number;
     startPercentage?: number;
-}) {
+}): string {
     const startIndex = startPercentage
         ? txtPartial.length * startPercentage
         : 0;

@@ -5,6 +5,7 @@ import {
     // IMasterContents
 } from '../models';
 import {
+    getRanges,
     splitMasterContents,
 } from '.';
 
@@ -21,26 +22,31 @@ export function splitMasterContentsWithRanges(
 
     txtMasterSplit
         .map((model: IContents, index: number) => {
-            const { isPartial, text } = model;
-
-            const textRows = text.split('\n');
-            const lastTextRow = textRows[textRows.length - 1];
-            const startRow: number = 1;
-            const endRow: number = textRows.length;
-            const startCol: number = 1;
-            const endCol: number = lastTextRow.length;
-
-            /**
-             * @return {IContents} model
-             */
-            const masterContents: IContents = {
+            const { 
                 isPartial,
                 text,
-                startRow,
-                endRow,
-                startCol,
-                endCol,
-            };
+            } = model;
+
+            // const textRows = text.split('\n');
+            // const lastTextRow = textRows[textRows.length - 1];
+            // const startRow: number = 1;
+            // const endRow: number = textRows.length;
+            // const startCol: number = 1;
+            // const endCol: number = lastTextRow.length;
+
+            // /**
+            //  * @return {IContents} model
+            //  */
+            // const masterContents: IContents = {
+            //     isPartial,
+            //     text,
+            //     startRow,
+            //     endRow,
+            //     startCol,
+            //     endCol,
+            // };
+            const masterContents: IContents = getRanges(isPartial, text);
+
             if (index === 0) {
                 txtMasterWithStats.push(masterContents);
             }
@@ -57,7 +63,10 @@ export function splitMasterContentsWithRanges(
                     lastModel,
                     model
                 });
-                const { isPartial, text } = model;
+                const { 
+                    //isPartial,
+                    text,
+                } = model;
 
                 const lastRow = (lastModel.abs ? lastModel.abs.endRow : lastModel.endRow) || 0;
                 const lastCol = (lastModel.abs ? lastModel.abs.endCol : lastModel.endCol) || 0;
