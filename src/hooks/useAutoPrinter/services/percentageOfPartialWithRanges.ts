@@ -3,7 +3,8 @@ import {
 } from '../../../models';
 import {
     percentageOfPartial,
-} from './percentageOfPartial';
+    getRanges,
+} from '.';
 
 export function percentageOfPartialWithRanges({ 
     partial, 
@@ -14,13 +15,6 @@ export function percentageOfPartialWithRanges({
     endPercentage: number;
     startPercentage?: number;
 }):IContents {
-    // const {
-    //     text,
-    //     startRow,
-    //     startCol,
-    //     endRow,
-    //     endCol,
-    // } = partial;
 
     const txtPercentage = percentageOfPartial({
         txtPartial: partial.text,
@@ -28,8 +22,5 @@ export function percentageOfPartialWithRanges({
         startPercentage,
     });
 
-    return {
-        ...partial,
-        text: txtPercentage,
-    }
+    return getRanges(true, txtPercentage);
 }
