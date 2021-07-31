@@ -1,10 +1,7 @@
 import {IPartial} from '../../../../models';
-import {IMasterContents} from '../../models';
 import {
-    splitMasterContents,
-    // splitMasterContentsWithRanges,
-    masterAndPartials,
     masterAndPartialsFactory,
+    TMasterAndPartialsFactory as TFactory,
 } from '..';
 
 const masterContents = `class Hello{
@@ -107,26 +104,18 @@ const txtCompiled = `class Hello{
 
 
 describe('useAutoPrinter', ()=>{
-    it('#masterAndPartials', ()=>{
-        const masterContentsSplit:IMasterContents[] = splitMasterContents(masterContents);
-        const percentage = 1;
-        const txtMasterAndPartials:string[] = masterAndPartials({
-            masterContentsSplit,
-            partials, 
-            percentage,
-        });
-        expect(txtMasterAndPartials.map(t => t.trim())).toEqual(checks);
-        expect(txtMasterAndPartials.join('')).toEqual(txtCompiled);
+
+    let factory:TFactory;
+
+    beforeAll(()=>{
+      factory = masterAndPartialsFactory({
+        masterContents,
+        partials,
+      });
     });
-    it('#masterAndPartialsFactory', ()=>{
-        // const masterContentsSplit:IMasterContents[] = splitMasterContents(masterContents);
+
+    it('#masterAndPartialsFactory - 100%', ()=>{
         const percentage = 1;
-
-        const factory = masterAndPartialsFactory({
-          masterContents,
-          partials,
-        });
-
         const txtMasterAndPartials:string[] = factory(percentage);
 
         expect(txtMasterAndPartials.map(t => t.trim())).toEqual(checks);

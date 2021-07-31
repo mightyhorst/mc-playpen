@@ -1,6 +1,9 @@
 import { IPartial } from '../../../models';
 import {IMasterContents} from '../models';
-import { percentageOfPartial } from '.';
+import { 
+    percentageOfPartial, 
+    splitMasterContents, 
+} from '.';
 
 /**
  * @function masterAndPartials
@@ -24,11 +27,10 @@ export function masterAndPartials({
     startPercentage?: number;
 }) {
     const masterAndPartials = masterContentsSplit.map((masterPiece:IMasterContents) => {
-        console.log({masterPiece});
         /**
          * @step find partial
          */
-        const matchedPartial = partials.find((partial) => {
+        const matchedPartial = partials.find((partial:IPartial) => {
             return masterPiece.text.search(partial.partialId) >= 0;
         });
 
@@ -51,24 +53,4 @@ export function masterAndPartials({
     });
 
     return masterAndPartials;
-}
-
-export function masterAndPartialsFactory({
-    masterContentsSplit,
-    partials,
-}: {
-    masterContentsSplit: IMasterContents[];
-    partials: IPartial[];
-}) {
-    return (
-        percentage: number,
-        startPercentage?: number,
-    ) => {
-        return masterAndPartials({
-            masterContentsSplit,
-            partials,
-            percentage,
-            startPercentage,
-        })
-    }
 }

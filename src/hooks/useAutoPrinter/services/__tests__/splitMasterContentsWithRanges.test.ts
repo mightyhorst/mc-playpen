@@ -40,51 +40,86 @@ describe('useAutoPrinter', ()=>{
             {
                 isPartial: true,
                 text: "{{partial01}}",
-                startRow: 3,
-                startCol: 5,
-                
-                endRow: 3,
-                endCol: 17,
+                startRow: 1,
+                endRow: 1,
+                startCol: 1,
+                endCol: 13,
+                abs: {
+                    startRow: 3,
+                    startCol: 5,
+                    endRow: 3,
+                    endCol: 17,
+                },
             },
             {
                 isPartial: false,
                 text: "method(){    }",
-                startRow: 4,
-                endRow: 10,
-                startCol: 18,
-                endCol: 19,
+                startRow: 1,
+                endRow: 7,
+                startCol: 1,
+                endCol: 2,
+                abs: {
+                    startRow: 4,
+                    endRow: 10,
+                    startCol: 18,
+                    endCol: 19,
+                },
             },
             {
                 isPartial: true,
                 text: "{{partial02}}",
-                startRow: 11,
-                endRow: 11,
-                startCol: 20,
-                endCol: 32,
+                startRow: 1,
+                endRow: 1,
+                startCol: 1,
+                endCol: 13,
+                abs: {
+                    startRow: 11,
+                    endRow: 11,
+                    startCol: 20,
+                    endCol: 32,
+                }
             },
             {
                 isPartial: false,
                 text: "help(){    }",
-                startRow: 12,
-                endRow: 18,
-                startCol: 33,
-                endCol: 34,
+                startRow: 1,
+                endRow: 7,
+                startCol: 1,
+                endCol: 2,
+                abs: {
+                    startRow: 12,
+                    endRow: 18,
+                    startCol: 33,
+                    endCol: 34,
+                },
             },
             {
                 isPartial: true,
                 text: "{{partial03}}",
-                startRow: 19,
-                endRow: 19,
-                startCol: 35,
-                endCol: 47,
+                startRow: 1,
+                endRow: 1,
+                startCol: 1,
+                endCol: 13,
+                abs: {
+                    startRow: 19,
+                    endRow: 19,
+                    startCol: 35,
+                    endCol: 47,
+                },
             },
             {
                 isPartial: false,
                 text: "something(){    }}",
-                startRow: 20,
-                endRow: 25,
-                startCol: 48,
-                endCol: 48,
+                startRow: 1,
+                endRow: 6,
+                startCol: 1,
+                endCol: 1,
+                abs: {
+                    startRow: 20,
+                    endRow: 25,
+                    startCol: 48,
+                    endCol: 48,
+                }
             }
         ])
 
@@ -94,10 +129,14 @@ describe('useAutoPrinter', ()=>{
         const partial01 = masterContentsArr[1];
         expect(partial01.text.trim()).toEqual(`{{partial01}}`);
         expect(partial01.isPartial).toBe(true);
-        expect(partial01.startRow).toBe(3);
-        expect(partial01.endRow).toBe(3);
-        expect(partial01.startCol).toBe(5);
-        expect(partial01.endCol).toBe(17);
+        expect(partial01.startRow).toBe(1);
+        expect(partial01.endRow).toBe(1);
+        expect(partial01.abs!.startRow).toBe(3);
+        expect(partial01.abs!.endRow).toBe(3);
+        expect(partial01.startCol).toBe(1);
+        expect(partial01.endCol).toBe(13);
+        expect(partial01.abs!.startCol).toBe(5);
+        expect(partial01.abs!.endCol).toBe(17);
         
         expect(masterContentsArr[3].text.trim()).toEqual(`{{partial02}}`);
         expect(masterContentsArr[3].isPartial).toBe(true);

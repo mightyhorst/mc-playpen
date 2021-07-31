@@ -1,5 +1,8 @@
 import {
-    IMasterContents
+    IContents,
+} from '../../../models';
+import {
+    // IMasterContents
 } from '../models';
 import {
     splitMasterContents,
@@ -8,16 +11,16 @@ import {
 /**
  * @function splitMasterContentsWithRanges
  * @param {string} masterContents - compiled master contents
- * @returns {IMasterContents} masterContentsSplit - Array<{isPartial:boolean, text:string}>
+ * @returns {IContents} masterContentsSplit - Array<{isPartial:boolean, text:string}>
  */
 export function splitMasterContentsWithRanges(
     masterContents: string
-): IMasterContents[] {
-    let txtMasterSplit: IMasterContents[] = splitMasterContents(masterContents);
-    const txtMasterWithStats: IMasterContents[] = [];
+): IContents[] {
+    let txtMasterSplit: IContents[] = splitMasterContents(masterContents);
+    const txtMasterWithStats: IContents[] = [];
 
     txtMasterSplit
-        .map((model: IMasterContents, index: number) => {
+        .map((model: IContents, index: number) => {
             const { isPartial, text } = model;
 
             const textRows = text.split('\n');
@@ -28,15 +31,15 @@ export function splitMasterContentsWithRanges(
             const endCol: number = lastTextRow.length;
 
             /**
-             * @return {IMasterContents} model
+             * @return {IContents} model
              */
-            const masterContents: IMasterContents = {
+            const masterContents: IContents = {
                 isPartial,
                 text,
                 startRow,
                 endRow,
                 startCol,
-                endCol
+                endCol,
             };
             if (index === 0) {
                 txtMasterWithStats.push(masterContents);
@@ -45,8 +48,8 @@ export function splitMasterContentsWithRanges(
         })
         .reduce(
             (
-                lastModel: IMasterContents,
-                model: IMasterContents,
+                lastModel: IContents,
+                model: IContents,
                 index: number
             ) => {
                 console.log({
@@ -56,8 +59,9 @@ export function splitMasterContentsWithRanges(
                 });
                 const { isPartial, text } = model;
 
-                const lastRow = lastModel.endRow || 0;
-                const lastCol = lastModel.endCol || 0;
+                const lastRow = (lastModel.abs ? lastModel.abs.endRow : lastModel.endRow) || 0;
+                const lastCol = (lastModel.abs ? lastModel.abs.endCol : lastModel.endCol) || 0;
+                // const lastCol = lastModel.endCol || 0;
 
                 const textRows = text.split('\n');
                 const lastTextRow = textRows[textRows.length - 1];
@@ -69,13 +73,14 @@ export function splitMasterContentsWithRanges(
                 /**
                  * @return {IMasterContents} model
                  */
-                const masterContents: IMasterContents = {
-                    isPartial,
-                    text,
-                    startRow,
-                    endRow,
-                    startCol,
-                    endCol
+                const masterContents: IContents = {
+                    ...model,
+                    abs: {
+                        startRow,
+                        endRow,
+                        startCol,
+                        endCol,
+                    }
                 };
                 txtMasterWithStats.push(masterContents);
                 return masterContents;
