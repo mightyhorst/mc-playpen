@@ -1,3 +1,6 @@
+/**
+ * @requires Hooks
+ */
 import {
     useState,
     useEffect,
@@ -29,7 +32,7 @@ interface UsePrinterProps{
     partials: IPartial[];
 }
 
-export function usePrinter({
+export function useAutoPrinter({
     master,
     partials,
 }:UsePrinterProps): {
@@ -73,4 +76,4 @@ export function usePrinter({
         compiled,
     };
 }
-export default usePrinter;
+export default useAutoPrinter;

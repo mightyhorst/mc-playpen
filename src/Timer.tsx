@@ -2,7 +2,7 @@ import { useState, useMemo, } from 'react';
 import { 
     useRafLoop,
     useUpdate,
-    usePrinter,
+    useAutoPrinter,
 } from './hooks';
 import {
     IMaster,
@@ -72,7 +72,7 @@ export function TimerContainer(){
             data: {}
         },
     ];
-    const {} = usePrinter({
+    const {} = useAutoPrinter({
         master,
         partials,
     });

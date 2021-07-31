@@ -7,17 +7,19 @@ import {
 } from '.';
 
 export function percentageOfPartialWithRanges({ 
-    partial, 
+    txtPartial, 
     endPercentage, 
     startPercentage = 0, 
 }:{
-    partial: IContents;
+    // partial: IContents;
+    txtPartial: string;
     endPercentage: number;
     startPercentage?: number;
 }):IContents {
 
     const txtPercentage = percentageOfPartial({
-        txtPartial: partial.text,
+        // txtPartial: partial.text,
+        txtPartial,
         endPercentage,
         startPercentage,
     });

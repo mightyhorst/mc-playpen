@@ -1,12 +1,15 @@
-import { IPartial } from '../../../models';
-import {IMasterContents} from '../models';
 import { 
-    percentageOfPartial, 
+    IPartial,
+    IContents,
+} from '../../../models';
+// import {IMasterContents} from '../models';
+import { 
+    percentageOfPartialWithRanges, 
     splitMasterContents, 
 } from '.';
 
 /**
- * @function masterAndPartials
+ * @function masterAndPartialsWithRanges
  *
  * @description master and partials
  *
@@ -15,18 +18,18 @@ import {
  * @param {number} percentage - from 0 to 1 for 0 % to 100%, how much of the string to print
  * @param {number} startPercentage - (optional) from 0 to 1 for 0 % to 100%
  */
-export function masterAndPartials({
+export function masterAndPartialsWithRanges({
     masterContentsSplit,
     partials,
     percentage,
     startPercentage = 0,
 }: {
-    masterContentsSplit: IMasterContents[];
+    masterContentsSplit: IContents[];
     partials: IPartial[];
     percentage: number;
     startPercentage?: number;
-}) {
-    const masterAndPartials = masterContentsSplit.map((masterPiece:IMasterContents) => {
+}): IContents[] {
+    const masterAndPartials = masterContentsSplit.map((masterPiece:IContents) => {
         /**
          * @step find partial
          */
@@ -38,7 +41,7 @@ export function masterAndPartials({
          * @step replace the partial tag, with the partial contents
          */
         if (matchedPartial) {
-            return percentageOfPartial({
+            return percentageOfPartialWithRanges({
                 txtPartial: matchedPartial.compiledContent,
                 endPercentage: percentage,
                 startPercentage: startPercentage || 0,
@@ -48,7 +51,7 @@ export function masterAndPartials({
          * @step if we dont have a partial, return the master
          */
         else{
-            return masterPiece.text;
+            return masterPiece;
         }
     });
 

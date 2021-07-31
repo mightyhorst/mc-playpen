@@ -23,7 +23,7 @@ describe('useAutoPrinter', ()=>{
     it('#percentageOfPartialWithRanges - end percentages', ()=>{
         expect(
             percentageOfPartialWithRanges({
-                partial,
+                txtPartial: partial.text,
                 endPercentage: 1,
             })
         ).toEqual({
@@ -32,7 +32,7 @@ describe('useAutoPrinter', ()=>{
 
         expect(
             percentageOfPartialWithRanges({
-                partial,
+                txtPartial: partial.text,
                 endPercentage: .1,
             })
         ).toEqual({
@@ -43,7 +43,7 @@ describe('useAutoPrinter', ()=>{
 
         expect(
             percentageOfPartialWithRanges({
-                partial,
+                txtPartial: partial.text,
                 endPercentage: .2,
             })
         ).toEqual({
@@ -54,7 +54,7 @@ describe('useAutoPrinter', ()=>{
 
         expect(
             percentageOfPartialWithRanges({
-                partial,
+                txtPartial: partial.text,
                 endPercentage: .3,
             })
         ).toEqual({
@@ -65,7 +65,7 @@ describe('useAutoPrinter', ()=>{
 
         expect(
             percentageOfPartialWithRanges({
-                partial,
+                txtPartial: partial.text,
                 endPercentage: .4,
             })
         ).toEqual({
@@ -76,7 +76,7 @@ describe('useAutoPrinter', ()=>{
 
         expect(
             percentageOfPartialWithRanges({
-                partial,
+                txtPartial: partial.text,
                 endPercentage: .5,
             })
         ).toEqual({
@@ -87,7 +87,7 @@ describe('useAutoPrinter', ()=>{
 
         expect(
             percentageOfPartialWithRanges({
-                partial,
+                txtPartial: partial.text,
                 endPercentage: .6,
             })
         ).toEqual({
@@ -98,7 +98,7 @@ describe('useAutoPrinter', ()=>{
 
         expect(
             percentageOfPartialWithRanges({
-                partial,
+                txtPartial: partial.text,
                 endPercentage: .7,
             })
         ).toEqual({
@@ -109,7 +109,7 @@ describe('useAutoPrinter', ()=>{
 
         expect(
             percentageOfPartialWithRanges({
-                partial,
+                txtPartial: partial.text,
                 endPercentage: .8,
             })
         ).toEqual({
@@ -120,7 +120,7 @@ describe('useAutoPrinter', ()=>{
 
         expect(
             percentageOfPartialWithRanges({
-                partial,
+                txtPartial: partial.text,
                 endPercentage: .9,
             })
         ).toEqual({
@@ -130,11 +130,9 @@ describe('useAutoPrinter', ()=>{
         });
     });
     it('#percentageOfPartialWithRanges - end percentages and start percentages', ()=>{
-        const txtPartial = `1234567890`;
-        
         expect(
             percentageOfPartialWithRanges({
-                partial,
+                txtPartial: partial.text,
                 endPercentage: 1,
                 startPercentage: 0,
             })
@@ -145,7 +143,7 @@ describe('useAutoPrinter', ()=>{
 
         expect(
             percentageOfPartialWithRanges({
-                partial,
+                txtPartial: partial.text,
                 endPercentage: .1,
                 startPercentage: 0,
             })
@@ -157,7 +155,7 @@ describe('useAutoPrinter', ()=>{
 
         expect(
             percentageOfPartialWithRanges({
-                partial,
+                txtPartial: partial.text,
                 endPercentage: .2,
                 startPercentage: 0,
             })
@@ -169,7 +167,7 @@ describe('useAutoPrinter', ()=>{
 
         expect(
             percentageOfPartialWithRanges({
-                partial,
+                txtPartial: partial.text,
                 endPercentage: .3,
                 startPercentage: 0,
             })
@@ -181,7 +179,7 @@ describe('useAutoPrinter', ()=>{
 
         expect(
             percentageOfPartialWithRanges({
-                partial,
+                txtPartial: partial.text,
                 endPercentage: .4,
                 startPercentage: 0,
             })
@@ -193,7 +191,7 @@ describe('useAutoPrinter', ()=>{
 
         expect(
             percentageOfPartialWithRanges({
-                partial,
+                txtPartial: partial.text,
                 endPercentage: .5,
                 startPercentage: 0,
             })
@@ -205,7 +203,7 @@ describe('useAutoPrinter', ()=>{
 
         expect(
             percentageOfPartialWithRanges({
-                partial,
+                txtPartial: partial.text,
                 endPercentage: .6,
                 startPercentage: 0,
             })
@@ -217,7 +215,7 @@ describe('useAutoPrinter', ()=>{
 
         expect(
             percentageOfPartialWithRanges({
-                partial,
+                txtPartial: partial.text,
                 endPercentage: .6,
                 startPercentage: 0,
             })
@@ -229,7 +227,7 @@ describe('useAutoPrinter', ()=>{
 
         expect(
             percentageOfPartialWithRanges({
-                partial,
+                txtPartial: partial.text,
                 endPercentage: .7,
                 startPercentage: 0,
             })
@@ -241,7 +239,7 @@ describe('useAutoPrinter', ()=>{
 
         expect(
             percentageOfPartialWithRanges({
-                partial,
+                txtPartial: partial.text,
                 endPercentage: .8,
                 startPercentage: 0,
             })
@@ -253,7 +251,7 @@ describe('useAutoPrinter', ()=>{
 
         expect(
             percentageOfPartialWithRanges({
-                partial,
+                txtPartial: partial.text,
                 endPercentage: .9,
                 startPercentage: 0,
             })
@@ -265,7 +263,7 @@ describe('useAutoPrinter', ()=>{
 
         expect(
             percentageOfPartialWithRanges({
-                partial,
+                txtPartial: partial.text,
                 endPercentage: .9,
                 startPercentage: .1,
             })
@@ -277,7 +275,7 @@ describe('useAutoPrinter', ()=>{
 
         expect(
             percentageOfPartialWithRanges({
-                partial,
+                txtPartial: partial.text,
                 endPercentage: .9,
                 startPercentage: .2,
             })
@@ -289,7 +287,7 @@ describe('useAutoPrinter', ()=>{
 
         expect(
             percentageOfPartialWithRanges({
-                partial,
+                txtPartial: partial.text,
                 endPercentage: .9,
                 startPercentage: .3,
             })
@@ -301,7 +299,7 @@ describe('useAutoPrinter', ()=>{
         
         expect(
             percentageOfPartialWithRanges({
-                partial,
+                txtPartial: partial.text,
                 endPercentage: .9,
                 startPercentage: .4,
             })
@@ -313,7 +311,7 @@ describe('useAutoPrinter', ()=>{
         
         expect(
             percentageOfPartialWithRanges({
-                partial,
+                txtPartial: partial.text,
                 endPercentage: .9,
                 startPercentage: .5,
             })
@@ -325,7 +323,7 @@ describe('useAutoPrinter', ()=>{
         
         expect(
             percentageOfPartialWithRanges({
-                partial,
+                txtPartial: partial.text,
                 endPercentage: .9,
                 startPercentage: .6,
             })
@@ -337,7 +335,7 @@ describe('useAutoPrinter', ()=>{
         
         expect(
             percentageOfPartialWithRanges({
-                partial,
+                txtPartial: partial.text,
                 endPercentage: .9,
                 startPercentage: .7,
             })
@@ -349,7 +347,7 @@ describe('useAutoPrinter', ()=>{
         
         expect(
             percentageOfPartialWithRanges({
-                partial,
+                txtPartial: partial.text,
                 endPercentage: .9,
                 startPercentage: .8,
             })
@@ -361,7 +359,7 @@ describe('useAutoPrinter', ()=>{
         
         expect(
             percentageOfPartialWithRanges({
-                partial,
+                txtPartial: partial.text,
                 endPercentage: .9,
                 startPercentage: .9,
             })

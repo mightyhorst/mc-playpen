@@ -27,6 +27,6 @@ export function masterAndPartialsFactory({
             partials,
             percentage,
             startPercentage,
-        })
+        });
     }
 }
