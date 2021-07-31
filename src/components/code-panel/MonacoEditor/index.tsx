@@ -16,6 +16,7 @@ export function MonacoEditor({
      defaultLanguage={language || "javascript"}
      defaultValue={value || "// ball sack monster"}
      theme="vs-dark"
+     value={value}
    />
   );
 }

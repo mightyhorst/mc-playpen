@@ -8,6 +8,9 @@ import {
     IMaster,
     IPartial,
 } from './models';
+import {
+    MonacoEditor,
+} from './components';
 
 const txtMaster = `class Hello{
     {{partial01}}
@@ -86,11 +89,12 @@ export function Editor({percentage}: {percentage:number}){
     // setCompiled(factory(1).map(t=>t.text).join(''))
 
     return (<>
-        <pre style={{
-            transition: 'all .1s',
-        }}>
+        {/* <pre>
             {compiled}
-        </pre>
+        </pre> */}
+        <MonacoEditor 
+            value={compiled}
+        />
     </>);
 }
 
