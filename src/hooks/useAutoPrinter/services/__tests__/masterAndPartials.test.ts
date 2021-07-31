@@ -4,6 +4,7 @@ import {
     splitMasterContents,
     // splitMasterContentsWithRanges,
     masterAndPartials,
+    masterAndPartialsFactory,
 } from '..';
 
 const masterContents = `class Hello{
@@ -103,6 +104,8 @@ const txtCompiled = `class Hello{
   }
 }`;
 
+
+
 describe('useAutoPrinter', ()=>{
     it('#masterAndPartials', ()=>{
         const masterContentsSplit:IMasterContents[] = splitMasterContents(masterContents);
@@ -112,7 +115,19 @@ describe('useAutoPrinter', ()=>{
             partials, 
             percentage,
         });
+        expect(txtMasterAndPartials.map(t => t.trim())).toEqual(checks);
+        expect(txtMasterAndPartials.join('')).toEqual(txtCompiled);
+    });
+    it('#masterAndPartialsFactory', ()=>{
+        const masterContentsSplit:IMasterContents[] = splitMasterContents(masterContents);
+        const percentage = 1;
 
+        const factory = masterAndPartialsFactory({
+          masterContentsSplit,
+          partials,
+        });
+
+        const txtMasterAndPartials:string[] = factory(percentage);
         expect(txtMasterAndPartials.map(t => t.trim())).toEqual(checks);
         expect(txtMasterAndPartials.join('')).toEqual(txtCompiled);
     });

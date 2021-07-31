@@ -18,7 +18,6 @@ export function masterAndPartials({
     percentage,
     startPercentage = 0,
 }: {
-    // masterContentsSplit: string[];
     masterContentsSplit: IMasterContents[];
     partials: IPartial[];
     percentage: number;
@@ -52,4 +51,24 @@ export function masterAndPartials({
     });
 
     return masterAndPartials;
+}
+
+export function masterAndPartialsFactory({
+    masterContentsSplit,
+    partials,
+}: {
+    masterContentsSplit: IMasterContents[];
+    partials: IPartial[];
+}) {
+    return (
+        percentage: number,
+        startPercentage?: number,
+    ) => {
+        return masterAndPartials({
+            masterContentsSplit,
+            partials,
+            percentage,
+            startPercentage,
+        })
+    }
 }
