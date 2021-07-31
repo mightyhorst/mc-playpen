@@ -30,7 +30,8 @@ const txtMaster = `class Hello{
 }`;
 const txtMasterCompiled = txtMaster;
 
-export function TimerContainer(){
+
+export function Editor({percentage}: {percentage:number}){
     const master: IMaster<{className:string}> = {
         fileName: 'template.hbs', 
         filePath: 'cat01/scene01/step01', 
@@ -72,16 +73,27 @@ export function TimerContainer(){
             data: {}
         },
     ];
-    const {} = useAutoPrinter({
+    // const [compiled, setCompiled] = useState('');
+    const {
+        compiled,
+        factory,
+    } = useAutoPrinter({
         master,
         partials,
+        percentage,
     });
-    return (<>
 
+    // setCompiled(factory(1).map(t=>t.text).join(''))
+
+    return (<>
+        <pre>
+            {compiled}
+        </pre>
     </>);
 }
 
-export function Timer(){
+
+export default function Timer(){
     // const [ticks, setTicks] = useState(0);
     // const [lastCall, setLastCall] = useState(0);
     const [start, setStart] = useState(Date.now());
@@ -125,6 +137,11 @@ export function Timer(){
         );
     }, [isActive, loopStop, update]);
 
+    const editor = useMemo(()=>{
+        const percentage = currentTime / duration;
+        return <Editor percentage={percentage} />
+    }, [currentTime, duration]);
+
     return (
         <div>
             <div>duration: {duration}</div>
@@ -154,7 +171,10 @@ export function Timer(){
             </button>
             {isActive() && btnStop}
             <p>{isActive() ? 'playing...' : isFinished ? 'finished' : 'paused'}</p>
+            {editor}
             <p>{msg}</p>
         </div>
     );
 };
+
+

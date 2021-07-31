@@ -24,7 +24,7 @@ import {
   MonacoEditor,
   PlaybarPanel,
 } from './components';
-import {Timer} from './Timer';
+import Timer from './Timer';
 
 
 const numbers = [...Array(5000000)].map(e => ~~(Math.random() * 1000000));

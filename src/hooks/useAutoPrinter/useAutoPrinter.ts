@@ -2,8 +2,10 @@
  * @requires Hooks
  */
 import {
+    useCallback, 
+    useEffect, 
+    useMemo,
     useState,
-    useEffect,
 } from 'react';
 
 /**
@@ -12,53 +14,65 @@ import {
 import {
     IMaster,
     IPartial,
+    IContents,
 } from '../../models';
-import {
-    IMasterContents,
-} from './models';
 
 /**
  * @requires Services
  */
 import{
-    hbsRegex,
+    // hbsRegex,
     // allPartials,
-    splitMasterContents,
-    splitMasterContentsWithRanges,
+    // splitMasterContents,
+    // splitMasterContentsWithRanges,
+    // masterAndPartialsFactory,
+    masterAndPartialsWithRangesFactory,
+    // TMasterAndPartialsWithRangesFactory,
 } from './services';
 
 interface UsePrinterProps{
     master: IMaster;
     partials: IPartial[];
+    percentage?: number;
 }
 
 export function useAutoPrinter({
     master,
     partials,
+    percentage = 1,
 }:UsePrinterProps): {
+    // factory: () => TMasterAndPartialsWithRangesFactory;
+    factory: (percentage: number, startPercentage?: number) => IContents[];
     compiled: string;
 }{
-    let compiled = ``;
+    // const [percentage, setPercentage] = useState(initPercentage);
+    const [compiled, setCompiled] = useState(``);
 
     /**
      * @constant {string[]} allPartials - find every partial in the compiled content
      */
     const masterContents = master.compiledContent;
-    const allPartials = masterContents.match(hbsRegex);
-
-    /**
-     * @constant {string} masterContentsSplit - split the master template into master text and partial ids 
-     */
-    let masterContentsSplit:IMasterContents[] = 
-        splitMasterContentsWithRanges(masterContents);
     
     /**
-     * @constant {string} xxx - xxx 
+     * @constant {TMasterAndPartialsWithRangesFactory} factory - xxx 
      */
+    const factory = useMemo(() => {
+        return masterAndPartialsWithRangesFactory({
+            masterContents,
+            partials,
+        });
+    }, [masterContents, partials]);
 
     /**
      * @step 
      */
+    useEffect(()=>{
+        const contents:IContents[] = factory(percentage);
+        setCompiled( 
+            contents.map(t=>t.text).join('')
+        );
+    }, [percentage, factory]);
+    
 
     /**
      * @step 
@@ -73,6 +87,7 @@ export function useAutoPrinter({
      */
 
     return {
+        factory,
         compiled,
     };
 }

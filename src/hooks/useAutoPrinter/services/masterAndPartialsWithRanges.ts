@@ -7,6 +7,7 @@ import {
     percentageOfPartialWithRanges, 
     splitMasterContents, 
 } from '.';
+import { getRanges } from './getRanges';
 
 /**
  * @function masterAndPartialsWithRanges
@@ -51,7 +52,7 @@ export function masterAndPartialsWithRanges({
          * @step if we dont have a partial, return the master
          */
         else{
-            return masterPiece;
+            return getRanges(false, masterPiece.text);
         }
     });
 
