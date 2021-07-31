@@ -38,6 +38,7 @@ describe('useAutoPrinter', ()=>{
         ).toEqual({
             ...expected,
             text: '1',
+            endCol: 1,
         });
 
         expect(
@@ -48,6 +49,7 @@ describe('useAutoPrinter', ()=>{
         ).toEqual({
             ...expected,
             text: '12',
+            endCol: 2,
         });
 
         expect(
@@ -58,6 +60,7 @@ describe('useAutoPrinter', ()=>{
         ).toEqual({
             ...expected,
             text: '123',
+            endCol: 3,
         });
 
         expect(
@@ -68,6 +71,7 @@ describe('useAutoPrinter', ()=>{
         ).toEqual({
             ...expected,
             text: '1234',
+            endCol: 4,
         });
 
         expect(
@@ -78,6 +82,7 @@ describe('useAutoPrinter', ()=>{
         ).toEqual({
             ...expected,
             text: '12345',
+            endCol: 5,
         });
 
         expect(
@@ -88,6 +93,7 @@ describe('useAutoPrinter', ()=>{
         ).toEqual({
             ...expected,
             text: '123456',
+            endCol: 6,
         });
 
         expect(
@@ -98,6 +104,7 @@ describe('useAutoPrinter', ()=>{
         ).toEqual({
             ...expected,
             text: '1234567',
+            endCol: 7,
         });
 
         expect(
@@ -108,6 +115,7 @@ describe('useAutoPrinter', ()=>{
         ).toEqual({
             ...expected,
             text: '12345678',
+            endCol: 8,
         });
 
         expect(
@@ -118,6 +126,7 @@ describe('useAutoPrinter', ()=>{
         ).toEqual({
             ...expected,
             text: '123456789',
+            endCol: 9,
         });
     });
     it('#percentageOfPartialWithRanges - end percentages and start percentages', ()=>{
@@ -143,6 +152,7 @@ describe('useAutoPrinter', ()=>{
         ).toEqual({
             ...expected,
             text: '1',
+            endCol: 1,
         });
 
         expect(
@@ -154,6 +164,7 @@ describe('useAutoPrinter', ()=>{
         ).toEqual({
             ...expected,
             text: '12',
+            endCol: 2,
         });
 
         expect(
@@ -165,6 +176,7 @@ describe('useAutoPrinter', ()=>{
         ).toEqual({
             ...expected,
             text: '123',
+            endCol: 3,
         });
 
         expect(
@@ -176,6 +188,7 @@ describe('useAutoPrinter', ()=>{
         ).toEqual({
             ...expected,
             text: '1234',
+            endCol: 4,
         });
 
         expect(
@@ -187,6 +200,7 @@ describe('useAutoPrinter', ()=>{
         ).toEqual({
             ...expected,
             text: '12345',
+            endCol: 5,
         });
 
         expect(
@@ -198,6 +212,7 @@ describe('useAutoPrinter', ()=>{
         ).toEqual({
             ...expected,
             text: '123456',
+            endCol: 6,
         });
 
         expect(
@@ -208,7 +223,8 @@ describe('useAutoPrinter', ()=>{
             })
         ).toEqual({
             ...expected,
-            text: '1234567',
+            text: '123456',
+            endCol: 6,
         });
 
         expect(
@@ -219,7 +235,8 @@ describe('useAutoPrinter', ()=>{
             })
         ).toEqual({
             ...expected,
-            text: '12345678',
+            text: '1234567',
+            endCol: 7,
         });
 
         expect(
@@ -231,6 +248,7 @@ describe('useAutoPrinter', ()=>{
         ).toEqual({
             ...expected,
             text: '12345678',
+            endCol: 8,
         });
 
         expect(
@@ -242,6 +260,7 @@ describe('useAutoPrinter', ()=>{
         ).toEqual({
             ...expected,
             text: '123456789',
+            endCol: 9,
         });
 
         expect(
@@ -253,6 +272,7 @@ describe('useAutoPrinter', ()=>{
         ).toEqual({
             ...expected,
             text: '23456789',
+            endCol: 8,
         });
 
         expect(
@@ -264,6 +284,7 @@ describe('useAutoPrinter', ()=>{
         ).toEqual({
             ...expected,
             text: '3456789',
+            endCol: 7,
         });
 
         expect(
@@ -275,6 +296,7 @@ describe('useAutoPrinter', ()=>{
         ).toEqual({
             ...expected,
             text: '456789',
+            endCol: 6,
         });
         
         expect(
@@ -286,6 +308,7 @@ describe('useAutoPrinter', ()=>{
         ).toEqual({
             ...expected,
             text: '56789',
+            endCol: 5,
         });
         
         expect(
@@ -297,6 +320,7 @@ describe('useAutoPrinter', ()=>{
         ).toEqual({
             ...expected,
             text: '6789',
+            endCol: 4,
         });
         
         expect(
@@ -308,6 +332,7 @@ describe('useAutoPrinter', ()=>{
         ).toEqual({
             ...expected,
             text: '789',
+            endCol: 3,
         });
         
         expect(
@@ -319,6 +344,7 @@ describe('useAutoPrinter', ()=>{
         ).toEqual({
             ...expected,
             text: '89',
+            endCol: 2,
         });
         
         expect(
@@ -330,6 +356,7 @@ describe('useAutoPrinter', ()=>{
         ).toEqual({
             ...expected,
             text: '9',
+            endCol: 1,
         });
         
         expect(
@@ -341,6 +368,7 @@ describe('useAutoPrinter', ()=>{
         ).toEqual({
             ...expected,
             text: '',
+            endCol: 0,
         });
     });
 });
