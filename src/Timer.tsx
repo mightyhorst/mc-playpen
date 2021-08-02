@@ -3,6 +3,7 @@ import {
     useRafLoop,
     useUpdate,
     useAutoPrinter,
+    useTimer,
 } from './hooks';
 import {
     IMaster,
@@ -34,7 +35,17 @@ const txtMaster = `class Hello{
 const txtMasterCompiled = txtMaster;
 
 
-export function Editor({percentage}: {percentage:number}){
+export function Editor(
+    {
+        currentTime,
+        duration,
+    }: {
+        currentTime:number,
+        duration:number,
+    }
+){
+    const percentage = (currentTime / duration);
+
     const master: IMaster<{className:string}> = {
         fileName: 'template.hbs', 
         filePath: 'cat01/scene01/step01', 
@@ -103,10 +114,19 @@ export default function Timer(){
     // const [ticks, setTicks] = useState(0);
     // const [lastCall, setLastCall] = useState(0);
     const [start, setStart] = useState(Date.now());
-    const [currentTime, setCurrentTime] = useState(0);
     const [isFinished, setIsFinished] = useState(false);
     const [msg, setMsg] = useState('');
-    const duration = 2000;
+
+    /**
+     * @hooks
+     */
+    const {
+        currentTime,
+        setCurrentTime,
+        duration,
+    } = useTimer();
+    // const [currentTime, setCurrentTime] = useState(0);
+    // const duration = 2000;
     const update = useUpdate();
 
     const [loopStop, loopStart, isActive] = useRafLoop((time: number) => {
@@ -141,11 +161,14 @@ export default function Timer(){
                 STOP
             </button>
         );
-    }, [isActive, loopStop, update]);
+    }, [isActive, loopStop, update, setCurrentTime]);
 
     const editor = useMemo(()=>{
-        const percentage = currentTime / duration;
-        return <Editor percentage={percentage} />
+        return <Editor 
+            // percentage={percentage} 
+            currentTime={currentTime}
+            duration={duration}
+        />
     }, [currentTime, duration]);
 
     return (

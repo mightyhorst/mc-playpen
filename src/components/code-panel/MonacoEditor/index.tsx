@@ -24,16 +24,26 @@ import {
 import {
   IRecordHistory,
 } from './IRecordHistory';
-import {files, IFile} from './files';
-type IEditor = monaco.editor.IStandaloneCodeEditor;
+import {IFile} from './IFile';
+import {files} from './files';
+const fileIds:string[] = Object.keys(files);
 
 const getTimestamp = () => (new Date()).getTime();
 
+/**
+ * @interface MonacoEditorProps
+ */
 interface MonacoEditorProps{
     height?: string;
     language?: string;
     value?: string;
 }
+/**
+ * @function MonacoEditor
+ * @param height 
+ * @param language 
+ * @param value 
+ */
 export function MonacoEditor({
     height,
     language,
@@ -57,8 +67,8 @@ export function MonacoEditor({
     recordingHistory, 
     setRecordingHistory,
   ] = useState<IRecordHistory[]>([]);
-  const [fileName, setFileName] = useState("script.js");
-  const file:IFile = files[fileName];
+  const [fileId, setFileId] = useState("script.js");
+  const file:IFile = files[fileId];
 
   /**
    * @event onMount
@@ -66,7 +76,7 @@ export function MonacoEditor({
    * @param {Monaco} monaco - monanco
    */
   function onMount(
-    editor: IEditor, 
+    editor: monaco.editor.IStandaloneCodeEditor, 
     monaco: Monaco,
   ) {
     editorRef.current = editor; 
@@ -94,8 +104,13 @@ export function MonacoEditor({
   ){
     console.log({value});
     console.log({event: modelChangedEvent});
+    let recordingStarted:number;
     if(!recordingStartedTimestamp){
-      setRecordingStartedTimestamp(getTimestamp());
+      recordingStarted = getTimestamp();
+      setRecordingStartedTimestamp(recordingStarted);
+    }
+    else{
+      recordingStarted = recordingStartedTimestamp;
     }
 
     const changes: monaco.editor.IModelContentChange[] = modelChangedEvent.changes;
@@ -110,19 +125,18 @@ export function MonacoEditor({
         endColumn
       } = change.range;
       const textChanged = change.text;
-      const timestamp = (new Date()).getTime();
+      const timestamp = getTimestamp() - recordingStarted;
 
       const recordingModel:IRecordHistory = {
-        fileId: this.state.activeFileId,
+        fileId,
         timestamp,
-        // timeSinceRecordingStarted: timestamp - recordingStartedTimestamp,
-        currentProgressTime: this.props.currentProgressTime,
         startLineNumber,
         endLineNumber,
         startColumn,
         endColumn,
         textChanged
-      }
+      };
+      recordingHistory.push(recordingModel);
     });
 
   }
@@ -140,15 +154,32 @@ export function MonacoEditor({
    * @render
    */
   return (
-   <Editor
-     height={height || "90vh"}
-     defaultLanguage={language || "typescript"}
-     defaultValue={value || "// ball sack monster"}
-     theme={'vs-light' || "vs-dark"}
-     value={value}
-     onMount={onMount}
-     onChange={onChange}
-     onValidate={onValidate}
-   />
+    <section>
+      <div className="btnFiles">
+        {
+          fileIds.map(fileId => {
+            return (
+              <button 
+                key={fileId}
+                onClick={()=>setFileId(fileId)}
+              >
+                {fileId}
+              </button>
+            );
+          })
+        }
+      </div>
+      <Editor
+        height={height || "90vh"}
+        theme={'vs-light' || "vs-dark"}
+        onMount={onMount}
+        onChange={onChange}
+        onValidate={onValidate}
+        path={file.name}
+        defaultLanguage={file.language}
+        defaultValue={file.value}
+        value={value}
+      />
+    </section>
   );
 }

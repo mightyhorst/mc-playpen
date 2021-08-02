@@ -17,6 +17,13 @@ import {
 } from 'recoil';
 
 /**
+ * @requires Hooks
+ */
+import {
+  TimerProvider,
+} from './hooks';
+
+ /**
  * @requires Components
  */
 import {
@@ -54,6 +61,11 @@ export default function App({children}: {children?: ReactNode}) {
     //     <MonacoEditor />
     //   </div>
     // </RecoilRoot>
-    <Timer />
+    <TimerProvider
+      initCurrentTime={0}
+      initDuration={2000}
+    >
+      <Timer />
+    </TimerProvider>
   );
 }
