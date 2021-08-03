@@ -1,4 +1,7 @@
-import {ReactNode, useEffect, useState} from 'react';
+import {
+  ReactNode,
+  useState,
+} from 'react';
 import './styles.css';
 
 /**
@@ -21,6 +24,7 @@ import {
  */
 import {
   TimerProvider,
+  RecordingProvider,
 } from './hooks';
 
  /**
@@ -55,17 +59,15 @@ export default function App({children}: {children?: ReactNode}) {
   };
 
   return (
-    // <RecoilRoot>
-    //   <div className="App">
-    //     <PlaybarPanel />
-    //     <MonacoEditor />
-    //   </div>
-    // </RecoilRoot>
-    <TimerProvider
-      initCurrentTime={0}
-      initDuration={2000}
-    >
-      <Timer />
-    </TimerProvider>
+    <RecoilRoot>
+      <RecordingProvider>
+        <TimerProvider
+          initCurrentTime={0}
+          initDuration={2000}
+          >
+          <Timer />
+        </TimerProvider>
+      </RecordingProvider>
+    </RecoilRoot>
   );
 }

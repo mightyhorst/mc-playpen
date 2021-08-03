@@ -116,6 +116,7 @@ export default function Timer(){
     const [start, setStart] = useState(Date.now());
     const [isFinished, setIsFinished] = useState(false);
     const [msg, setMsg] = useState('');
+    const update = useUpdate();
 
     /**
      * @hooks
@@ -127,7 +128,6 @@ export default function Timer(){
     } = useTimer();
     // const [currentTime, setCurrentTime] = useState(0);
     // const duration = 2000;
-    const update = useUpdate();
 
     const [loopStop, loopStart, isActive] = useRafLoop((time: number) => {
         const now = Date.now();
