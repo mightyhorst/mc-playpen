@@ -1,4 +1,5 @@
 import {
+  useEffect,
   useRef, 
   useState,
 } from 'react';
@@ -13,6 +14,7 @@ import Editor, {
   Monaco,
 } from "@monaco-editor/react";
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
+// import * as monaco from 'monaco-editor';
 
 /**
  * @requires Services
@@ -57,8 +59,8 @@ export function MonacoEditor({
   /**
    * @refs
    */
-  const editorRef = useRef(null);
-  const monacoRef = useRef(null);
+  const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
+  const monacoRef = useRef<Monaco | null>(null);
 
   /**
    * @state
@@ -79,6 +81,8 @@ export function MonacoEditor({
   } = useRecording();
   const {
     setDuration,
+    isActive,
+    currentTime,
   } = useRecordingTimer();
 
   /**
@@ -86,6 +90,41 @@ export function MonacoEditor({
    */
   const [fileId, setFileId] = useState("script.js");
   const file:IFile = files[fileId];
+
+  useEffect(()=>{
+    if(isActive()){
+        const ranges = recordingHistory
+          .filter(record => {
+              return record.timestamp <= currentTime;
+          })
+          .map(record => {
+              let {
+                textChanged,
+                startColumn,
+                endColumn,
+                startLineNumber,
+                endLineNumber,
+              } = record;
+              
+              const range = new monaco.Range(
+                startLineNumber, 
+                startColumn, 
+                endLineNumber, 
+                endColumn,
+              );
+              return {
+                range,
+                text: textChanged,
+              };
+          });
+          // if(editorRef.current){
+          //   editorRef.current?.getModel()?.applyEdits(
+          //     ranges,
+          //   );
+          // }
+          console.log({ranges})
+    }
+  }, [isActive, currentTime, recordingHistory]);
 
   /**
    * @event onMount
@@ -103,7 +142,7 @@ export function MonacoEditor({
     const KeyCode = monaco.KeyCode;
     
     editor.addCommand(KeyMod.CtrlCmd | KeyCode.KEY_S, () => {
-			const textContents = editor.getModel().getValue();
+			const textContents = editor.getModel()?.getValue();
       console.log('CTRL-S', {
         textContents,
         md5: md5(textContents),

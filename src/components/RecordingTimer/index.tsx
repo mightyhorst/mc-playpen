@@ -59,7 +59,17 @@ export function RecordingTimer(){
             <p>{isActive() ? 'playing...' : isFinished ? 'finished' : 'paused'}</p>
             <p>{msg}</p>
             <pre>
-                {JSON.stringify(recordingHistory, null, 4)}
+                {isActive() ?
+                    recordingHistory
+                    .filter(record => {
+                        return record.timestamp <= currentTime;
+                    })
+                    .map(record => {
+                        let text = record.textChanged;
+                        return text;
+                    }).join(''):
+                    JSON.stringify(recordingHistory, null, 4)
+                }
             </pre>
         </div>
     );
