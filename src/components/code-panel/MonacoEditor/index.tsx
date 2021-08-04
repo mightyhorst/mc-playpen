@@ -29,7 +29,7 @@ import {
 } from '../../../models';
 import {IFile} from './IFile';
 import {files} from './files';
-import { useRecording } from '../../../hooks';
+import { useRecording, useRecordingTimer } from '../../../hooks';
 const fileIds:string[] = Object.keys(files);
 
 const getTimestamp = () => (new Date()).getTime();
@@ -77,6 +77,9 @@ export function MonacoEditor({
     recordingHistory,
     setRecordingHistory,
   } = useRecording();
+  const {
+    setDuration,
+  } = useRecordingTimer();
 
   /**
    * @namespace files
@@ -153,6 +156,9 @@ export function MonacoEditor({
       recordingHistory.push(recordingModel);
     });
     setRecordingHistory(recordingHistory);
+    if(recordingHistory.length > 0){
+      setDuration(recordingHistory[recordingHistory.length - 1].timestamp);
+    }
   }
   /**
    * @event onValidate

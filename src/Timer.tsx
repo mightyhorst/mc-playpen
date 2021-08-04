@@ -35,7 +35,7 @@ const txtMaster = `class Hello{
 const txtMasterCompiled = txtMaster;
 
 
-export function Editor(){
+export const Editor = memo(function Editor(){
     const {percentage} = useTimer();
 
     const master: IMaster<{className:string}> = {
@@ -94,7 +94,7 @@ export function Editor(){
             value={compiled}
         />
     </>);
-}
+});
 
 
 export function Timer(){

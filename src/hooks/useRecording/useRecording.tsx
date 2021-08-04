@@ -61,7 +61,7 @@ export function useRecording(): {
         recordingStartTimestamp,
         setRecordingStartTimestamp,
         recordingHistory,
-        setRecordingHistory
+        setRecordingHistory,
     };
 }
 
@@ -134,7 +134,7 @@ export function useRecordingTimer(props? :{
     }, false);
 
     /**
-     * @step btn stop callback
+     * @event stop
      */
     const onStopClick = useCallback(()=>{
         if (isActive()) {

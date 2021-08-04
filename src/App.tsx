@@ -35,6 +35,7 @@ import {
   // TodoList,
   MonacoEditor,
   PlaybarPanel,
+  RecordingTimer,
 } from './components';
 import Timer from './Timer';
 
@@ -68,6 +69,7 @@ export default function App({children}: {children?: ReactNode}) {
             initDuration={2000}
             >
             <Timer />
+            <RecordingTimer />
           </TimerProvider>
         </RecordingTimerProvider>
       </RecordingProvider>
