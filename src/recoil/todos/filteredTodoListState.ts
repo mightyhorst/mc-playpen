@@ -8,7 +8,7 @@ import {
     todoListFilterState,
     todoListState,
 } from '.'
-import { ITodo } from '../components/models';
+import { ITodo } from '../../components/todos/models';
 
 export const filteredTodoListState: RecoilValueReadOnly<ITodo[]> = selector({
     key: 'filteredTodoListState',

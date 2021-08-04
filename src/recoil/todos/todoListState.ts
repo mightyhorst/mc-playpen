@@ -1,7 +1,7 @@
 import {
     atom,
 } from 'recoil';
-import { ITodo } from '../components/models';
+import { ITodo } from '../../components/todos/models';
 
 export const todoListState = atom<ITodo[]>({
     key: 'todoListState',

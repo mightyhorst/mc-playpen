@@ -25,6 +25,7 @@ import {
 import {
   TimerProvider,
   RecordingProvider,
+  RecordingTimerProvider,
 } from './hooks';
 
  /**
@@ -61,12 +62,14 @@ export default function App({children}: {children?: ReactNode}) {
   return (
     <RecoilRoot>
       <RecordingProvider>
-        <TimerProvider
-          initCurrentTime={0}
-          initDuration={2000}
-          >
-          <Timer />
-        </TimerProvider>
+        <RecordingTimerProvider>
+          <TimerProvider
+            initCurrentTime={0}
+            initDuration={2000}
+            >
+            <Timer />
+          </TimerProvider>
+        </RecordingTimerProvider>
       </RecordingProvider>
     </RecoilRoot>
   );

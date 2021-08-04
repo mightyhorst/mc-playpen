@@ -1,4 +1,4 @@
-import { useState, useMemo, } from 'react';
+import { useState, useMemo, memo, } from 'react';
 import { 
     useRafLoop,
     useUpdate,
@@ -35,16 +35,8 @@ const txtMaster = `class Hello{
 const txtMasterCompiled = txtMaster;
 
 
-export function Editor(
-    {
-        currentTime,
-        duration,
-    }: {
-        currentTime:number,
-        duration:number,
-    }
-){
-    const percentage = (currentTime / duration);
+export function Editor(){
+    const {percentage} = useTimer();
 
     const master: IMaster<{className:string}> = {
         fileName: 'template.hbs', 
@@ -97,12 +89,7 @@ export function Editor(
         percentage,
     });
 
-    // setCompiled(factory(1).map(t=>t.text).join(''))
-
     return (<>
-        {/* <pre>
-            {compiled}
-        </pre> */}
         <MonacoEditor 
             value={compiled}
         />
@@ -110,11 +97,13 @@ export function Editor(
 }
 
 
-export default function Timer(){
+export function Timer(){
     // const [ticks, setTicks] = useState(0);
     // const [lastCall, setLastCall] = useState(0);
-    const [start, setStart] = useState(Date.now());
-    const [isFinished, setIsFinished] = useState(false);
+    // const [start, setStart] = useState(Date.now());
+    // const [isFinished, setIsFinished] = useState(false);
+    // const [currentTime, setCurrentTime] = useState(0);
+    // const duration = 2000;
     const [msg, setMsg] = useState('');
     const update = useUpdate();
 
@@ -122,80 +111,55 @@ export default function Timer(){
      * @hooks
      */
     const {
+        startTime, 
+        setStartTime,
         currentTime,
         setCurrentTime,
         duration,
-    } = useTimer();
-    // const [currentTime, setCurrentTime] = useState(0);
-    // const duration = 2000;
-
+        setDuration,
+        percentage,
+        isFinished,
+        loopStop, 
+        loopStart, 
+        isActive,
+        onStopClick,
+        onPlayPauseClick,
+    } = useTimer({
+        callback: ()=> setMsg('stopped...'),
+    });
+    
+    /*
     const [loopStop, loopStart, isActive] = useRafLoop((time: number) => {
         const now = Date.now();
         setCurrentTime(now - start);
-        // setTicks((ticks) => ticks + 1);
-        // setLastCall(time);
 
         if (currentTime >= duration) {
             loopStop();
             setMsg('stopped...');
             update();
-            setIsFinished(true);
+            // setIsFinished(true);
         }
     }, false);
+    */
 
     const btnStop = useMemo(()=>{
         return (
-            <button
-                onClick={() => {
-                    if (isActive()) {
-                        loopStop();
-                    }
-                    else {
-                        setStart(Date.now());
-                    }
-                    setCurrentTime(0);
-                    setIsFinished(false);
-                    update();
-                }}
-            >
+            <button onClick={onStopClick}>
                 STOP
             </button>
         );
-    }, [isActive, loopStop, update, setCurrentTime]);
+    }, [onStopClick]);
 
     const editor = useMemo(()=>{
-        return <Editor 
-            // percentage={percentage} 
-            currentTime={currentTime}
-            duration={duration}
-        />
-    }, [currentTime, duration]);
+        return <Editor />
+    }, []);
 
     return (
         <div>
             <div>duration: {duration}</div>
             <div>currentTime: {currentTime}</div>
             <br />
-            <button
-                onClick={() => {
-                    if (isActive()) {
-                        loopStop();
-                    } 
-                    else {
-                        if(isFinished){
-                            setCurrentTime(0);
-                            setStart(Date.now());
-                        }
-                        else{
-                            setStart(Date.now() - currentTime);
-                        }
-                        loopStart();
-                    }
-                    setIsFinished(false);
-                    
-                    update();
-                }}
-            >
+            <button onClick={onPlayPauseClick} >
                 {isActive() ? 'PAUSE' : 'START'}
             </button>
             {isActive() && btnStop}
@@ -206,4 +170,4 @@ export default function Timer(){
     );
 };
 
-
+export default memo(Timer);
