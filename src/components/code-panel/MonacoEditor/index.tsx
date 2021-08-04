@@ -83,6 +83,8 @@ export function MonacoEditor({
     setDuration,
     isActive,
     currentTime,
+    percentage,
+    isFinished,
   } = useRecordingTimer();
 
   /**
@@ -92,7 +94,7 @@ export function MonacoEditor({
   const file:IFile = files[fileId];
 
   useEffect(()=>{
-    if(isActive()){
+    if(isActive() || !isFinished){
         const ranges = recordingHistory
           .filter(record => {
               return record.timestamp <= currentTime;
@@ -117,14 +119,22 @@ export function MonacoEditor({
                 text: textChanged,
               };
           });
-          // if(editorRef.current){
-          //   editorRef.current?.getModel()?.applyEdits(
-          //     ranges,
-          //   );
-          // }
+          if(editorRef.current){
+            editorRef.current?.getModel()?.applyEdits(
+              ranges,
+            );
+          }
           console.log({ranges})
+        }
+      else{
+          
+          console.log({
+            currentTime,
+            isActive: isActive(),
+            percentage,
+          })
     }
-  }, [isActive, currentTime, recordingHistory]);
+  }, [isActive, currentTime, recordingHistory, percentage, isFinished]);
 
   /**
    * @event onMount
@@ -158,6 +168,9 @@ export function MonacoEditor({
     value:string|undefined, 
     modelChangedEvent:monaco.editor.IModelContentChangedEvent,
   ){
+    if(!isFinished) return;
+
+
     console.log({value});
     console.log({event: modelChangedEvent});
     let recordingStarted:number;
@@ -215,10 +228,6 @@ export function MonacoEditor({
    */
   return (
     <section>
-      <pre>
-        {JSON.stringify(recordingStartTimestamp, null, 4)}
-        {JSON.stringify(recordingHistory, null, 4)}
-      </pre>
       <div className="btnFiles">
         {
           fileIds.map(fileId => {
