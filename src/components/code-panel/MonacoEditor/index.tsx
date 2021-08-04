@@ -1,4 +1,7 @@
-import {useRef, useState} from 'react';
+import {
+  useRef, 
+  useState,
+} from 'react';
 
 /**
  * @requires Monaco
@@ -23,9 +26,10 @@ import {
  */
 import {
   IRecordHistory,
-} from './IRecordHistory';
+} from '../../../models';
 import {IFile} from './IFile';
 import {files} from './files';
+import { useRecording } from '../../../hooks';
 const fileIds:string[] = Object.keys(files);
 
 const getTimestamp = () => (new Date()).getTime();
@@ -59,14 +63,24 @@ export function MonacoEditor({
   /**
    * @state
    */
-  const [
-    recordingStartedTimestamp,
-    setRecordingStartedTimestamp,
-  ] = useState<number>();
-  const [
-    recordingHistory, 
+  // const [
+  //   recordingStartedTimestamp,
+  //   setRecordingStartedTimestamp,
+  // ] = useState<number>();
+  // const [
+  //   recordingHistory, 
+  //   setRecordingHistory,
+  // ] = useState<IRecordHistory[]>([]);
+  const {
+    recordingStartTimestamp,
+    setRecordingStartTimestamp,
+    recordingHistory,
     setRecordingHistory,
-  ] = useState<IRecordHistory[]>([]);
+  } = useRecording();
+
+  /**
+   * @namespace files
+   */
   const [fileId, setFileId] = useState("script.js");
   const file:IFile = files[fileId];
 
@@ -105,12 +119,12 @@ export function MonacoEditor({
     console.log({value});
     console.log({event: modelChangedEvent});
     let recordingStarted:number;
-    if(!recordingStartedTimestamp){
+    if(!recordingStartTimestamp){
       recordingStarted = getTimestamp();
-      setRecordingStartedTimestamp(recordingStarted);
+      setRecordingStartTimestamp(recordingStarted);
     }
     else{
-      recordingStarted = recordingStartedTimestamp;
+      recordingStarted = recordingStartTimestamp;
     }
 
     const changes: monaco.editor.IModelContentChange[] = modelChangedEvent.changes;
@@ -138,7 +152,7 @@ export function MonacoEditor({
       };
       recordingHistory.push(recordingModel);
     });
-
+    setRecordingHistory(recordingHistory);
   }
   /**
    * @event onValidate
@@ -150,11 +164,16 @@ export function MonacoEditor({
         markers,
       });
   }
+
   /**
    * @render
    */
   return (
     <section>
+      <pre>
+        {JSON.stringify(recordingStartTimestamp, null, 4)}
+        {JSON.stringify(recordingHistory, null, 4)}
+      </pre>
       <div className="btnFiles">
         {
           fileIds.map(fileId => {
