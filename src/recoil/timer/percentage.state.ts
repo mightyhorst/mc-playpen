@@ -7,9 +7,9 @@ import {
     durationTimeState,
 } from '.';
 
-export const percentageState = selector({
+export const percentageState = selector<number>({
     key: 'percentageState',
-    get: ({get}:{get: GetRecoilValue}) => {
+    get: ({get}:{get: GetRecoilValue}):number => {
         const currentTime = get(currentTimeState);
         const duration = get(durationTimeState);
         return currentTime/duration;

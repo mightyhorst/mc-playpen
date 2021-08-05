@@ -4,6 +4,7 @@ import {
     useUpdate,
     useAutoPrinter,
     useTimer,
+    useTimerRecoil,
 } from './hooks';
 import {
     IMaster,
@@ -13,6 +14,7 @@ import {
     MonacoEditor,
 } from './components';
 
+/*
 const txtMaster = `class Hello{
     {{partial01}}
   
@@ -79,7 +81,6 @@ export const Editor = memo(function Editor(){
             data: {}
         },
     ];
-    // const [compiled, setCompiled] = useState('');
     const {
         compiled,
         factory,
@@ -95,15 +96,9 @@ export const Editor = memo(function Editor(){
         />
     </>);
 });
-
+*/
 
 export function Timer(){
-    // const [ticks, setTicks] = useState(0);
-    // const [lastCall, setLastCall] = useState(0);
-    // const [start, setStart] = useState(Date.now());
-    // const [isFinished, setIsFinished] = useState(false);
-    // const [currentTime, setCurrentTime] = useState(0);
-    // const duration = 2000;
     const [msg, setMsg] = useState('');
     const update = useUpdate();
 
@@ -111,6 +106,8 @@ export function Timer(){
      * @hooks
      */
     const {
+        isPlaying,
+        isFinished,
         startTime, 
         setStartTime,
         currentTime,
@@ -118,7 +115,6 @@ export function Timer(){
         duration,
         setDuration,
         percentage,
-        isFinished,
         loopStop, 
         loopStart, 
         isActive,
@@ -150,10 +146,6 @@ export function Timer(){
         );
     }, [onStopClick]);
 
-    const editor = useMemo(()=>{
-        return <Editor />
-    }, []);
-
     return (
         <div>
             <div>duration: {duration}</div>
@@ -164,8 +156,8 @@ export function Timer(){
             </button>
             {isActive() && btnStop}
             <p>{isActive() ? 'playing...' : isFinished ? 'finished' : 'paused'}</p>
-            {editor}
             <p>{msg}</p>
+            <p>isPlaying:{isPlaying}</p>
         </div>
     );
 };

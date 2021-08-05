@@ -33,7 +33,7 @@ import {
  */
 import {
   // TodoList,
-  MonacoEditor,
+  CodePanel,
   PlaybarPanel,
   RecordingTimer,
 } from './components';
@@ -60,6 +60,13 @@ export default function App({children}: {children?: ReactNode}) {
     setResult(result);
   };
 
+  const rowCss = {
+    display: 'flex',
+    width: '100%'
+  }
+  const colCss = {
+    flex: '1 1 50%',
+  }
   return (
     <RecoilRoot>
       <RecordingProvider>
@@ -67,9 +74,18 @@ export default function App({children}: {children?: ReactNode}) {
           <TimerProvider
             initCurrentTime={0}
             initDuration={2000}
-            >
-            <Timer />
-            <RecordingTimer />
+          >
+              <section style={rowCss}>
+                <div style={colCss}>
+                  <Timer />
+                </div>
+                <div style={colCss}>
+                  <RecordingTimer />
+                </div>
+            </section>
+            <section>
+              <CodePanel />
+            </section>
           </TimerProvider>
         </RecordingTimerProvider>
       </RecordingProvider>
