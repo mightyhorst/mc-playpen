@@ -5,20 +5,35 @@ import {
     useContext,
     useCallback,
 } from 'react';
+
+/**
+ * @requires Hooks
+ */
 import { 
     useRafLoop, 
     useUpdate, 
 } from '..';
 
-const StartTimeContext = createContext<
-    [number, (startTime: number) => void]
->([0, () => {}]);
-const CurrentTimeContext = createContext<
-    [number, (currentTime: number) => void]
->([0, () => {}]);
-const DurationContext = createContext<
-    [number, (duration: number) => void]
->([0, () => {}]);
+/**
+ * @requires RecoilJs
+ */
+import {
+    useRecoilState,
+    useRecoilValue,
+    useSetRecoilState,
+} from 'recoil';
+import {
+    startTimeState,
+    currentTimeState,
+    durationTimeState,
+    percentageState,
+    isTimerPlayingState,
+    isTimerFinishedState,
+} from '../../recoil';
+
+const StartTimeContext = createContext<[number, (startTime: number) => void]>([0, () => {}]);
+const CurrentTimeContext = createContext<[number, (currentTime: number) => void]>([0, () => {}]);
+const DurationContext = createContext<[number, (duration: number) => void]>([0, () => {}]);
 const PercentageContext = createContext<number>(0);
 const IsFinishedContext = createContext<boolean>(false);
 
@@ -55,6 +70,8 @@ export function TimerProvider({
 export function useTimer(props? :{
     callback?: ()=>void;
 }): {
+    isPlaying: boolean;
+    isFinished: boolean;
     startTime: number;
     setStartTime: (startTime: number) => void;
     currentTime: number;
@@ -62,7 +79,6 @@ export function useTimer(props? :{
     duration: number;
     setDuration: (duration: number) => void;
     percentage: number;
-    isFinished: boolean;
     loopStop: ()=>void;
     loopStart: ()=>void;
     isActive: ()=>boolean;
@@ -89,6 +105,7 @@ export function useTimer(props? :{
             update();
         }
     }, false);
+    const isPlaying = isActive();
 
     /**
      * @step btn stop callback
@@ -140,6 +157,8 @@ export function useTimer(props? :{
     ]);
 
     return {
+        isPlaying,
+        isFinished,
         startTime, 
         setStartTime,
         currentTime,
@@ -147,7 +166,129 @@ export function useTimer(props? :{
         duration,
         setDuration,
         percentage,
+        loopStop,
+        loopStart,
+        isActive,
+        onStopClick,
+        onPlayPauseClick,
+    };
+}
+/**
+ * @function useTimerRecoil
+ * @param startTime
+ * @param setStartTime
+ * @param currentTime
+ * @param setCurrentTime
+ * @param duration
+ * @param setDuration
+ * @param percentage
+ * @param isFinished
+ * @param loopStop
+ * @param loopStart
+ * @param isActive
+ * @param onStopClick
+ * @param onPlayPauseClick 
+ */
+export function useTimerRecoil(props? :{
+    callback?: ()=>void;
+}): {
+    isPlaying: boolean;
+    isFinished: boolean;
+    startTime: number;
+    setStartTime: (startTime: number) => void;
+    currentTime: number;
+    setCurrentTime: (currentTime: number) => void;
+    duration: number;
+    setDuration: (duration: number) => void;
+    percentage: number;
+    loopStop: ()=>void;
+    loopStart: ()=>void;
+    isActive: ()=>boolean;
+    onStopClick: ()=>void;
+    onPlayPauseClick: ()=>void;
+} {
+    const [startTime, setStartTime] = useRecoilState(startTimeState);
+    const [currentTime, setCurrentTime] = useRecoilState(currentTimeState);
+    const [duration, setDuration] = useRecoilState(durationTimeState);
+    const percentage = useRecoilValue(percentageState);
+    // const [isPlaying, setIsPlaying] = useRecoilState(isTimerPlayingState);
+    const isFinished = useRecoilValue(isTimerFinishedState);
+
+    /**
+     * @step loop every request animation frame (RAF)
+     */
+    const update = useUpdate();
+    const [loopStop, loopStart, isActive] = useRafLoop((time: number) => {
+        const now = Date.now();
+        setCurrentTime(now - startTime);
+
+        if (currentTime >= duration) {
+            loopStop();
+            if(props?.callback) props.callback();
+            update();
+        }
+    }, false);
+    const isPlaying = isActive();
+
+    /**
+     * @step btn stop callback
+     */
+    const onStopClick = useCallback(()=>{
+        if (isActive()) {
+            loopStop();
+        }
+        else {
+            setStartTime(Date.now());
+        }
+        setCurrentTime(0);
+        update();
+    }, [
+        isActive,
+        loopStop,
+        setStartTime,
+        setCurrentTime,
+        update,
+    ]);
+
+    /**
+     * @event play/pause
+     */
+    const onPlayPauseClick = useCallback(()=>{
+        if (isActive()) {
+            loopStop();
+        } 
+        else {
+            if(isFinished){
+                setCurrentTime(0);
+                setStartTime(Date.now());
+            }
+            else{
+                setStartTime(Date.now() - currentTime);
+            }
+            loopStart();
+        }
+        update();
+    }, [
+        isActive,
         isFinished,
+        loopStart,
+        loopStop,
+        setStartTime,
+        currentTime,
+        setCurrentTime,
+        update,
+    ]);
+
+    return {
+        isPlaying,
+        isFinished,
+        startTime, 
+        setStartTime,
+        currentTime,
+        setCurrentTime,
+        duration,
+        setDuration,
+        percentage,
         loopStop,
         loopStart,
         isActive,

@@ -32,6 +32,8 @@ export function RecordingTimer(){
         callback: ()=> setMsg('stopped...'),
     });
     const {
+        isRecording,
+        toggleRecording,
         recordingStartTimestamp,
         setRecordingStartTimestamp,
         recordingHistory,
@@ -46,18 +48,32 @@ export function RecordingTimer(){
         );
     }, [onStopClick]);
 
+    const recordingCss = {
+        padding: `2px 10px`,
+        border: `1px solid ${!isRecording ? `rgb(255, 255, 254)`: `rgba(250, 0, 0, .9)`}`,
+        borderRadius: `2px`,
+        backgroundColor: (!isRecording ? `rgb(239, 239, 239)`: `rgba(250, 0, 0, 0.8)`),
+        color: (!isRecording ? `#4c4c4c`: `white`),
+        width: `140px`,
+        marginRight: `4px`,
+    }
+
     return (
         <div>
             <h4> Recording </h4>
             <div>Recording duration: {duration}</div>
             <div>Recording currentTime: {currentTime}</div>
             <br />
+            <button style={recordingCss} onClick={toggleRecording}>
+                {isRecording ? '🔴 Stop Recording': '⏺ Start Recording'}
+            </button>
             <button onClick={onPlayPauseClick} >
-                {isActive() ? 'PAUSE' : 'START'}
+                {isActive() ? '⏸ PAUSE' : '▶️ START'}
             </button>
             {isActive() && btnStop}
-            <p>{isActive() ? 'playing...' : isFinished ? 'finished' : 'paused'}</p>
+            <p>{isActive() ? '▶️ playing...' : isFinished ? '🔄 finished' : '⏸ paused'}</p>
             <p>{msg}</p>
+            {/* 
             <pre>
                 {isActive() ?
                     recordingHistory
@@ -70,7 +86,8 @@ export function RecordingTimer(){
                     }).join(''):
                     JSON.stringify(recordingHistory, null, 4)
                 }
-            </pre>
+            </pre> 
+            */}
         </div>
     );
 };

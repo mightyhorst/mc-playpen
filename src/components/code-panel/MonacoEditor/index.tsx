@@ -74,6 +74,7 @@ export function MonacoEditor({
   //   setRecordingHistory,
   // ] = useState<IRecordHistory[]>([]);
   const {
+    isRecording,
     recordingStartTimestamp,
     setRecordingStartTimestamp,
     recordingHistory,
@@ -85,6 +86,7 @@ export function MonacoEditor({
     currentTime,
     percentage,
     isFinished,
+    isPlaying,
   } = useRecordingTimer();
 
   /**
@@ -134,7 +136,13 @@ export function MonacoEditor({
             percentage,
           })
     }
-  }, [isActive, currentTime, recordingHistory, percentage, isFinished]);
+  }, [
+    isActive, 
+    currentTime, 
+    recordingHistory, 
+    percentage, 
+    isFinished,
+  ]);
 
   /**
    * @event onMount
@@ -168,10 +176,10 @@ export function MonacoEditor({
     value:string|undefined, 
     modelChangedEvent:monaco.editor.IModelContentChangedEvent,
   ){
-    if(!isFinished) return;
+    if(!isRecording) return;
 
 
-    console.log({value});
+    console.log('isRecording', {value});
     console.log({event: modelChangedEvent});
     let recordingStarted:number;
     if(!recordingStartTimestamp){

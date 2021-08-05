@@ -14,6 +14,7 @@ import { IRecordHistory } from '../../models';
 /**
  * @namespace Recording
  */
+const IsRecordingContext = createContext<[boolean, () => void]>([false, () => {}]);
 const RecordingStartTimeContext = createContext<[number, (startTime: number) => void]>([0, () => {}]);
 const RecordingHistoryContext = createContext<[IRecordHistory[], (recordingHistory: IRecordHistory[]) => void]>([[], () => {}]);
 
@@ -32,32 +33,55 @@ export function RecordingProvider({
 }: {
     children: ReactNode;
 }) {
+    const [isRecording, setIsRecording] = useState<boolean>(false);
     const [recordingStartTimestamp, setRecordingStartTimestamp] = useState<number>(0);
     const [recordingHistory, setRecordingHistory] = useState<IRecordHistory[]>([]);
     
+    const toggleRecording = useCallback(()=>{
+        setIsRecording(!isRecording);
+    }, [isRecording]);
+
     return (
-        <RecordingStartTimeContext.Provider value={[recordingStartTimestamp, setRecordingStartTimestamp]}>
-            <RecordingHistoryContext.Provider value={[recordingHistory, setRecordingHistory]}>
-                {children}                    
-            </RecordingHistoryContext.Provider>
-        </RecordingStartTimeContext.Provider>
+        <IsRecordingContext.Provider value={[isRecording, toggleRecording]}>
+            <RecordingStartTimeContext.Provider value={[recordingStartTimestamp, setRecordingStartTimestamp]}>
+                <RecordingHistoryContext.Provider value={[recordingHistory, setRecordingHistory]}>
+                    {children}                    
+                </RecordingHistoryContext.Provider>
+            </RecordingStartTimeContext.Provider>
+        </IsRecordingContext.Provider>
     );
 }
 
 export function useRecording(): {
+    isRecording: boolean;
+    toggleRecording: () => void;
     recordingStartTimestamp: number;
     setRecordingStartTimestamp: (startTime: number) => void;
     recordingHistory: IRecordHistory[];
     setRecordingHistory: (recordingHistory: IRecordHistory[]) => void;
 } {
-    const [recordingStartTimestamp, setRecordingStartTimestamp] = useContext(
+    const [
+        recordingStartTimestamp, 
+        setRecordingStartTimestamp,
+    ] = useContext(
         RecordingStartTimeContext,
     );
-    const [recordingHistory, setRecordingHistory] = useContext(
+    const [
+        recordingHistory, 
+        setRecordingHistory,
+    ] = useContext(
         RecordingHistoryContext,
+    );
+    const [
+        isRecording,
+        toggleRecording,
+    ] = useContext(
+        IsRecordingContext,
     );
 
     return {
+        isRecording,
+        toggleRecording,
         recordingStartTimestamp,
         setRecordingStartTimestamp,
         recordingHistory,
@@ -105,6 +129,7 @@ export function useRecordingTimer(props? :{
     duration: number;
     setDuration: (duration: number) => void;
     percentage: number;
+    isPlaying: boolean;
     isFinished: boolean;
     loopStop: ()=>void;
     loopStart: ()=>void;
@@ -132,6 +157,7 @@ export function useRecordingTimer(props? :{
             update();
         }
     }, false);
+    const isPlaying = isActive();
 
     /**
      * @event stop
@@ -191,6 +217,7 @@ export function useRecordingTimer(props? :{
         setDuration,
         percentage,
         isFinished,
+        isPlaying,
         loopStop,
         loopStart,
         isActive,
