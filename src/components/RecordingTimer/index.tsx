@@ -72,7 +72,7 @@ export function RecordingTimer(){
             </button>
             {isActive() && btnStop}
             <p>{isActive() ? '▶️ playing...' : isFinished ? '🔄 finished' : '⏸ paused'}</p>
-            <p>{msg}</p>
+            {/* <p>{msg}</p> */}
             {/* 
             <pre>
                 {isActive() ?
