@@ -1,4 +1,7 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  usePrevious,
+} from '../../../hooks';
 
 /**
  * @requires Monaco
@@ -50,6 +53,13 @@ export function MonacoEditor({ height, language, value }: MonacoEditorProps) {
     const monacoRef = useRef<Monaco | null>(null);
 
     /**
+     * @callback
+     */
+    const callbackPrint = useCallback((toPrint: IRecordHistory[]) => {
+      console.log('%c_toPrint --->', 'background: black; color: #fff', toPrint);
+    }, []);
+
+    /**
      * @state
      */
     // const [
@@ -64,8 +74,10 @@ export function MonacoEditor({ height, language, value }: MonacoEditorProps) {
         isRecording,
         recordingStartTimestamp,
         setRecordingStartTimestamp,
+        recordingStartText,
+        setRecordingStartText,
         recordingHistory,
-        setRecordingHistory
+        setRecordingHistory,
     } = useRecording();
     const {
         setDuration,
@@ -73,8 +85,19 @@ export function MonacoEditor({ height, language, value }: MonacoEditorProps) {
         currentTime,
         percentage,
         isFinished,
-        isPlaying
-    } = useRecordingTimer();
+        isPlaying,
+        /**
+         * @namespace autoPrint
+         */
+        toPrint,
+        notPrinted,
+        setToPrint,
+        setNotPrinted,
+        isFirstPlay,
+    } = useRecordingTimer({
+      callbackPrint: callbackPrint,
+    });
+    const [lastTimestamp, setLastTimestamp] = useState<number>(0);
 
     /**
      * @namespace files
@@ -82,44 +105,105 @@ export function MonacoEditor({ height, language, value }: MonacoEditorProps) {
     const [fileId, setFileId] = useState('script.js');
     const file: IFile = files[fileId];
 
+    /**
+     * @function convert to range
+     */
+    const recordToRange = useCallback((record:IRecordHistory)=>{
+        let {
+            textChanged: text,
+            startColumn,
+            endColumn,
+            startLineNumber,
+            endLineNumber
+        } = record;
+        
+        const range = new monaco.Range(
+            startLineNumber,
+            startColumn,
+            endLineNumber,
+            endColumn,
+        );
+        return {
+            range,
+            text,
+        };
+    }, []);
+
+    /**
+     * @function print the queue 
+     */
+    const printQueue = useCallback(() => {
+      const editor = editorRef.current;
+        if (editor) {
+          const model = editor.getModel();
+          if(model){
+            for (let i = 0; i < toPrint.length; i++) {
+              const record:IRecordHistory = toPrint[i];
+              const textRange = recordToRange(record);
+              model.applyEdits([textRange]);
+              toPrint.shift();
+              setToPrint(toPrint);
+            }
+          }
+        }
+    }, [
+      toPrint,
+      recordToRange,
+      setToPrint,
+    ]);
+    useEffect(()=>{
+      printQueue();
+    }, [
+      printQueue,
+    ]);
+
+    /**
+     * @step start
+     */
+    useEffect(()=>{
+      if(isFirstPlay && currentTime === 0){
+        console.log(`%c isFirstPlay`, `background: #3c3; color: white`, {currentTime});
+        console.log(`%c recordingStartText`, `background: #3c3; color: white`, recordingStartText);
+        const editor = editorRef.current;
+        if (editor) {
+          const model = editor.getModel();
+          if(model){
+              model.setValue(recordingStartText);
+          }
+        }
+      }
+      else{
+      }
+    }, [
+      isFirstPlay,
+      currentTime,
+      recordingStartText,
+    ]);
+    
+     /**
+     * @step 
+     */
     useEffect(() => {
         if (isActive() || !isFinished) {
-            const ranges = recordingHistory
-                .filter((record) => {
-                    return record.timestamp <= currentTime;
-                })
-                .map((record) => {
-                    let {
-                        textChanged,
-                        startColumn,
-                        endColumn,
-                        startLineNumber,
-                        endLineNumber
-                    } = record;
-
-                    const range = new monaco.Range(
-                        startLineNumber,
-                        startColumn,
-                        endLineNumber,
-                        endColumn,
-                    );
-                    return {
-                        range,
-                        text: textChanged,
-                    };
-                });
-            if (editorRef.current) {
-                editorRef.current?.getModel()?.applyEdits(ranges);
+            const editor = editorRef.current;
+            if (editor) {
+                const model = editor.getModel();
+                if(model){
+                    // model.setValue(recordingStartText);
+                    // model.applyEdits(ranges);
+                    
+                }
             }
-            console.log({ ranges });
         } else {
             // console.log({
             //   currentTime,
             //   isActive: isActive(),
             //   percentage,
             // })
+            // --- reset 
+            
         }
-    }, [isActive, currentTime, recordingHistory, percentage, isFinished]);
+    }, [isActive, currentTime, recordingHistory, percentage, isFinished, lastTimestamp, setLastTimestamp]);
 
     /**
      * @event onMount
@@ -140,10 +224,32 @@ export function MonacoEditor({ height, language, value }: MonacoEditorProps) {
             const textContents = editor.getModel()?.getValue();
             console.log('CTRL-S', {
                 textContents,
-                md5: md5(textContents)
+                md5: md5(textContents),
             });
         });
     }
+
+    /**
+     * @event isRecording changes
+     */
+    const prevIsRecording = usePrevious(isRecording);
+    useEffect(()=>{
+        if(!prevIsRecording && isRecording){
+          console.log('%c Start recording', 'background: red; color: white', {prevIsRecording, isRecording})
+          setRecordingStartTimestamp(getTimestamp());
+          const textContents = editorRef.current?.getModel()?.getValue();
+          if(textContents){
+            setRecordingStartText(textContents);
+          }
+        }
+      }, 
+      [
+        prevIsRecording,
+        isRecording,
+        setRecordingStartText,
+      ]
+    );
+
     /**
      * @event onChange
      * @param value - value of the IDE
@@ -151,22 +257,20 @@ export function MonacoEditor({ height, language, value }: MonacoEditorProps) {
      */
     function onChange(
         value: string | undefined,
-        modelChangedEvent: monaco.editor.IModelContentChangedEvent
+        modelChangedEvent: monaco.editor.IModelContentChangedEvent,
     ) {
         if (!isRecording) return;
 
-        console.log('isRecording', { value });
-        console.log({ event: modelChangedEvent });
         let recordingStarted: number;
         if (!recordingStartTimestamp) {
             recordingStarted = getTimestamp();
             setRecordingStartTimestamp(recordingStarted);
+           
         } else {
             recordingStarted = recordingStartTimestamp;
         }
 
-        const changes: monaco.editor.IModelContentChange[] =
-            modelChangedEvent.changes;
+        const changes: monaco.editor.IModelContentChange[] = modelChangedEvent.changes;
         changes.forEach((change: monaco.editor.IModelContentChange) => {
             /**
              * @model capture the changed text, position and time
@@ -234,6 +338,28 @@ export function MonacoEditor({ height, language, value }: MonacoEditorProps) {
                 defaultValue={file.value}
                 value={value}
             />
+            <article style={{
+              position: 'fixed',
+              left: 0,
+              top: 0,
+              width: '200px',
+              height: '100vh',
+              background: 'rgba(0,0,0,.7)',
+              color: 'white',
+            }}>
+              {toPrint.map(t=>t.textChanged).join('')}
+            </article>
+            <article style={{
+              position: 'fixed',
+              right: 0,
+              top: 0,
+              width: '200px',
+              height: '100vh',
+              background: 'rgba(0,0,0,.7)',
+              color: 'white',
+            }}>
+              {notPrinted.map(t=>t.textChanged).join('')}
+            </article>
         </section>
     );
 }

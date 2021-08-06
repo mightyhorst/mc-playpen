@@ -1,6 +1,13 @@
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { 
+  useCallback, 
+  useEffect, 
+  useMemo, 
+  useRef, 
+  useState, 
+} from 'react';
+import useUpdate from './useUpdate';
 
-export type RafLoopReturns = [() => void, () => void, () => boolean];
+export type RafLoopReturns = [() => void, () => void, () => boolean, number];
 
 export default function useRafLoop(
   callback: FrameRequestCallback,
@@ -11,10 +18,15 @@ export default function useRafLoop(
   const rafCallback = useRef(callback);
   rafCallback.current = callback;
 
+  const update = useUpdate();
+  const [loopIndex, setLoopIndex] = useState(0);
+
   const step = useCallback((time: number) => {
     if (rafActivity.current) {
       rafCallback.current(time);
       raf.current = requestAnimationFrame(step);
+      setLoopIndex(loopIndex+1);
+      update();
     }
   }, []);
 
@@ -36,6 +48,7 @@ export default function useRafLoop(
           }
         },
         (): boolean => rafActivity.current, // isActive
+        loopIndex,
         // eslint-disable-next-line react-hooks/exhaustive-deps
       ] as RafLoopReturns,
     []

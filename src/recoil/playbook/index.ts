@@ -1,5 +1,8 @@
 import { atom, atomFamily, selector, GetRecoilValue } from 'recoil';
 import axios from 'axios';
+import {
+    IPlaybookJson,
+} from '../../models';
 
 type GetProps = { get: GetRecoilValue };
 
@@ -18,12 +21,12 @@ export const playbookVersionState = atom<string>({
 
 export const playbookJsonState = selector({
     key: 'playbookJsonState',
-    get: async ({ get }: GetProps) => {
+    get: async ({ get }: GetProps):Promise<IPlaybookJson> => {
         const playbookAuthour = get(playbookAuthourState);
         const playbookName = get(playbookNameState);
         const playbookVersion = get(playbookVersionState);
         try{
-            const response = await axios.get(`https://610b8f8a2b6add0017cb392b.mockapi.io/playbookjson`);
+            const response = await axios.get<IPlaybookJson>(`https://610b8f8a2b6add0017cb392b.mockapi.io/playbookjson`);
             return response.data;
         }
         catch(err){
@@ -39,7 +42,8 @@ export const playbookJsonState = selector({
 export const playbookSteps = selector<any>({
     key: 'playbookSteps',
     get: ({ get }: GetProps): any => {
-        const playbookJson = get(playbookJsonState);
+        const playbookJson:IPlaybookJson = get(playbookJsonState);
+
     },
 });
 

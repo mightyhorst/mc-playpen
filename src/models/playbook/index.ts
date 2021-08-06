@@ -8,58 +8,58 @@ export interface IPlaybookIdsInProgress {
 	waitingForBlueprintFiles: boolean;
 }
 
-export interface IPlaybookDataStore {
+export interface IPlaybookJson {
 	config?: any;
-	categories?: IPlaybookCategoryStore[];
+	categories?: IPlaybookCategory[];
 }
 
-export interface IPlaybookCategoryStore {
+export interface IPlaybookCategory {
 	id: string;
 	duration: number;
 	title: string;
 	icon?: string;
 	colour?: string;
-	scenes: IPlaybookSceneStore[];
+	scenes: IPlaybookScene[];
 }
 
-export interface IPlaybookSceneStore {
+export interface IPlaybookScene {
 	id: string;
 	duration: number;
 	title: string;
-	steps: IPlaybookStepStore[];
+	steps: IPlaybookStep[];
 }
 
-export interface IPlaybookStepStore {
+export interface IPlaybookStep {
 	id: string;
 	duration: number;
 	title: string;
-	gitData: IPlaybookGitDataStore,
-	windowSettings?: IPlaybookJsonWindowSettingsStore,
-	timeline: IPlaybookTimelineStore[];
+	gitData: IPlaybookGitData,
+	windowSettings?: IPlaybookJsonWindowSettings,
+	timeline: IPlaybookTimeline[];
 }
 
 
-export interface IPlaybookGitDataStore {
+export interface IPlaybookGitData {
 	branch?: string
 }
 
-export interface IPlaybookJsonWindowSettingsStore {
-	browser?: IPlaybookJsonWindowSettingStore,
-	code?: IPlaybookJsonWindowSettingStore,
-	description?: IPlaybookJsonWindowSettingStore,
-	drawio?: IPlaybookJsonWindowSettingStore,
-	finder?: IPlaybookJsonWindowSettingStore,
-	playbar?: IPlaybookJsonWindowSettingStore,
-	sketch?: IPlaybookJsonWindowSettingStore,
-	terminal?: IPlaybookJsonWindowSettingStore,
-	test?: IPlaybookJsonWindowSettingStore,
-	trash?: IPlaybookJsonWindowSettingStore,
-	trello?: IPlaybookJsonWindowSettingStore,
-	video?: IPlaybookJsonWindowSettingStore,
-	spreadsheet?: IPlaybookJsonWindowSettingStore,
+export interface IPlaybookJsonWindowSettings {
+	browser?: IPlaybookJsonWindowSetting,
+	code?: IPlaybookJsonWindowSetting,
+	description?: IPlaybookJsonWindowSetting,
+	drawio?: IPlaybookJsonWindowSetting,
+	finder?: IPlaybookJsonWindowSetting,
+	playbar?: IPlaybookJsonWindowSetting,
+	sketch?: IPlaybookJsonWindowSetting,
+	terminal?: IPlaybookJsonWindowSetting,
+	test?: IPlaybookJsonWindowSetting,
+	trash?: IPlaybookJsonWindowSetting,
+	trello?: IPlaybookJsonWindowSetting,
+	video?: IPlaybookJsonWindowSetting,
+	spreadsheet?: IPlaybookJsonWindowSetting,
 }
 
-export interface IPlaybookJsonWindowSettingStore {
+export interface IPlaybookJsonWindowSetting {
 	isClosed?: boolean;
 	isMin?: boolean;
 	isMax?: boolean;
@@ -69,10 +69,10 @@ export interface IPlaybookJsonWindowSettingStore {
 	right?: number | string;
 	width?: number | string;
 	height?: number | string;
-	transitions?: IPlaybookJsonWindowSettingTransitionStore[];
+	transitions?: IPlaybookJsonWindowSettingTransition[];
 }
 
-export interface IPlaybookJsonWindowSettingTransitionStore {
+export interface IPlaybookJsonWindowSettingTransition {
 	start: number;
 	end: number;
 	isClosed?: boolean;
@@ -86,7 +86,7 @@ export interface IPlaybookJsonWindowSettingTransitionStore {
 	height?: number | string;
 }
 
-export interface IPlaybookTimelineStore {
+export interface IPlaybookTimeline {
 	id: string;
 	panel: string;
 	start: number | string;

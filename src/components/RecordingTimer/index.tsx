@@ -57,10 +57,10 @@ export function RecordingTimer(){
         width: `140px`,
         marginRight: `4px`,
     }
-
+    
     return (
         <div>
-            <h4> Recording </h4>
+            <h4> {'Recording'} </h4>
             <div>Recording duration: {duration}</div>
             <div>Recording currentTime: {currentTime}</div>
             <br />
