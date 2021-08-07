@@ -1,4 +1,5 @@
 import axios from 'axios';
+import {compile as hbsCompile} from 'handlebars';
 import { 
     atom, 
     atomFamily, 
@@ -199,8 +200,8 @@ interface IPartial{
     partialId: string;
     start: number;
     duration: number;
-    template: string;
-    template_data: {
+    template?: string;
+    template_data?: {
         [handlebarId: string]: string;
     };
     partialContent: string;
@@ -229,7 +230,16 @@ export const currentTimelineCodePanelsState = selector<ICode[]>({
             const DEBUG_templateUrl = `https://610b8f8a2b6add0017cb392b.mockapi.io/template-hbs` || template;
             const DEBUG_partialUrl = `https://610df94348beae001747b98c.mockapi.io/partial-01_hbs`;
             const templateFile:IFile = get(getFile(DEBUG_templateUrl));
-            const templateContent:string = templateFile.file_content;
+
+            /**
+             * @step handlebars
+             */
+            let templateContent:string = templateFile.file_content;
+            if(template_data){
+                const hbsTemplate = hbsCompile(templateFile.file_content);
+                templateContent = hbsTemplate(template_data);
+            }
+            
             /*
             const getPartialFiles = partial_sections.map(partial => getFile(DEBUG_partialUrl || partial.template))
             const partialFiles:IFile[] = get(waitForAll(getPartialFiles));
@@ -237,13 +247,22 @@ export const currentTimelineCodePanelsState = selector<ICode[]>({
             */
            const partials:IPartial[] = partial_sections.map(partial => {
                const partialFile:IFile = get(getFile(DEBUG_partialUrl || partial.template));
+
+                /**
+                 * @step handlebars
+                 */
+                let partialContent:string = partialFile.file_content;
+                if(partial.template_data){
+                    const hbsTemplate = hbsCompile(partialFile.file_content);
+                    partialContent = hbsTemplate(partial.template_data);
+                }
+
                return {
                     partialId: partial.partial_id,
                     start: partial.start,
                     duration: partial.duration,
-                    template: partial.template,
-                    template_data: partial.template_data,
-                    partialContent: partialFile.file_content,
+                    // template: partial.template,
+                    partialContent,
                }
            });
 
