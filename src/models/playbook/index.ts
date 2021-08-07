@@ -113,7 +113,8 @@ export interface IPlaybookTimelineStartCodeData {
 }
 
 export interface IPlaybookTimelineCodeData {
-    template: string; // -- The master file that we will be printing to the screen. Contains handlebar data points that are to be defined in template_data
+    // -- The master file that we will be printing to the screen. Contains handlebar data points that are to be defined in template_data
+    template: string; 
     /* -- 
         Data we will use when compiling the template. handlebarId will be {{handlebarId}} and it may have the data of:
 
@@ -126,8 +127,10 @@ export interface IPlaybookTimelineCodeData {
         else will apply as if it were part of the template file
     */
 	template_data: { [handlebarId: string]: string }; 
-	partial_sections: IPlaybookTimelineCodePartialData[]; // -- An array of all partials to slow print to the master
-	output: string; 									  // -- The output file name (file name in fileStorage.app)
+	// -- An array of all partials to slow print to the master
+	partial_sections: IPlaybookTimelineCodePartialData[];
+	// -- The output file name (file name in fileStorage.app)
+	output: string;
 }
 
 export interface IPlaybookTimelineCodePartialData {

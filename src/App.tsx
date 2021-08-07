@@ -1,6 +1,7 @@
 import {
   ReactNode,
   useState,
+  Suspense,
 } from 'react';
 import './styles.css';
 
@@ -13,11 +14,12 @@ import {
 } from "@koale/useworker";
 
 /**
- * 
+ * @requires Recoil
  */
 import {
   RecoilRoot,
 } from 'recoil';
+import RecoilDebug from './RecoilDebug';
 
 /**
  * @requires Hooks
@@ -69,7 +71,8 @@ export default function App({children}: {children?: ReactNode}) {
   }
   return (
     <RecoilRoot>
-      <RecordingProvider>
+      <RecoilDebug />
+      {/* <RecordingProvider>
         <RecordingTimerProvider>
           <TimerProvider
             initCurrentTime={0}
@@ -88,7 +91,7 @@ export default function App({children}: {children?: ReactNode}) {
             </section>
           </TimerProvider>
         </RecordingTimerProvider>
-      </RecordingProvider>
+      </RecordingProvider> */}
     </RecoilRoot>
   );
 }

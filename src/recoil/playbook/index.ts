@@ -5,6 +5,8 @@ import {
     IPlaybookCategory,
     IPlaybookScene,
     IPlaybookStep,
+    IPlaybookTimeline,
+    IPlaybookTimelineCodeData,
     
 } from '../../models';
 
@@ -32,9 +34,11 @@ export const playbookJsonState = selector<IPlaybookJson>({
         const playbookAuthour = get(playbookAuthourState);
         const playbookName = get(playbookNameState);
         const playbookVersion = get(playbookVersionState);
-        try{
+        try{    
+            
             const response = await axios.get<IPlaybookJson>(`https://610b8f8a2b6add0017cb392b.mockapi.io/playbookjson`);
-            return response.data;
+            const data = response.data;
+            return data;
         }
         catch(err){
             if(err.response){
@@ -52,6 +56,9 @@ export const playbookCategoriesState = selector<IPlaybookCategory[]>({
     key: 'playbookCategoriesState',
     get: ({ get }: GetProps): IPlaybookCategory[] => {
         const playbookJson:IPlaybookJson = get(playbookJsonState);
+        console.log({playbookJson});
+        console.log({'playbookJson.categories':playbookJson.categories});
+        
         return playbookJson.categories || [];
     },
 });
@@ -132,4 +139,30 @@ export const currentPlaybookStepState = selector<IPlaybookStep|null>({
         const playbookSteps:IPlaybookStep[] = get(playbookStepsState);
         return playbookSteps.find(step => step.id === currentPlaybookStepId) || null;
     }
+});
+
+/**
+ * @namespace Timeline
+ */
+export const playbookTimelineState = selector<IPlaybookTimeline[]>({
+    key: 'playbookTimelineState',
+    get: ({get}: GetProps): IPlaybookTimeline[] => {
+        const currentPlaybookStep:IPlaybookStep|null = get(currentPlaybookStepState);
+        if(currentPlaybookStep){
+            return currentPlaybookStep.timeline;
+        }
+        else{
+            return [];
+        }
+    },
+});
+//IPlaybookTimelineCodeData
+export const currentTimelineCodePanelsState = selector<IPlaybookTimeline[]>({
+    key: `currentTimelineCodePanelsState`,
+    get: ({get}: GetProps): IPlaybookTimeline[] => {
+        const currentTimeline:IPlaybookTimeline[] = get(playbookTimelineState);
+        const codeTimelines:IPlaybookTimeline[] = 
+            currentTimeline.filter(timeline => timeline.hasOwnProperty('code'));
+        return codeTimelines;
+    },
 });
