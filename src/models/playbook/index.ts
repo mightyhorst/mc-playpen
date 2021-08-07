@@ -135,7 +135,7 @@ export interface IPlaybookTimelineCodeData {
 
 export interface IPlaybookTimelineCodePartialData {
 	partial_id: string;    // -- The handle bar id wrapped in {{}} that we will need to search for in the master file
-	start: number | string; // -- The start time to print this partial
+	start: number; // -- The start time to print this partial
 	duration: number; 		// -- Duration of printing this partial
 	template: string; 		// -- The file we should use as a template to compile
 	template_data: { [handlebarId: string]: string }; // -- The data we will use to compile the template

@@ -18,13 +18,14 @@ export interface IFileStorageStore {
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  *  Microservice Storage - API data
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-export interface IMicroserviceStorageSuccess {
+export interface IStorageStatus<T> {
 	success: boolean;
-	data? : any;
+	data? : T;
+	// data? : IStorageFile|IStorageFile;
 	err? : any;
 }
 
-export interface IMicroserviceStorageFile {
+export interface IFolderList {
 	name : string;
 	path : string;
 	is_directory : boolean;
@@ -34,21 +35,38 @@ export interface IMicroserviceStorageFile {
 	file_type? : string;
 	file_extension? : string;
 }
+export interface IFolderListResp extends IStorageStatus<IFolderList>{
 
-export interface IMicroserviceStorageFileDetail {
+}
+
+export interface IFile {
+	/*
+	file_content: "class HelloWorld{ constructor(message){ this.message = message; {{partial01}} } } ",
+	name: "cat01-css-grid/scene00-define-a-grid/step00-defining-a-grid/template.hbs",
+	path: "/masterclass/blueprints/css-grid-playbook/1.0.0",
+	size_of: 88,
+	file_extension: ".hbs",
+	file_type: "text",
+	mime_type: "text/plain",
+	md5: "87f385c8e5ca4115b8bd2d3858814f4e"
+	*/
 	file_content : string;
-	file_extension : string;
-	file_type : string;
-	mime_type : string;
 	name : string;
 	path : string;
 	size_of : number;
+	file_extension : string;
+	file_type : string;
+	mime_type : string;
+	md5: string;
+}
+export interface IFileResp extends IStorageStatus<IFile>{
+
 }
 
 
 export interface IMicroserviceStorageGitCheckout {
 	branchChanged : boolean;
-	files? : IMicroserviceStorageFile[];
+	files? : IFolderList[];
 }
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

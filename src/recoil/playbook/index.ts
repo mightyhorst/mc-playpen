@@ -1,13 +1,42 @@
-import { atom, atomFamily, selector, GetRecoilValue } from 'recoil';
 import axios from 'axios';
+import { 
+    atom, 
+    atomFamily, 
+    selector, 
+    GetRecoilValue, 
+    selectorFamily, 
+    waitForAll, 
+} from 'recoil';
 import {
+    currentBlueprintIdState,
+    currentAppIdState,
+    blueprintFolderState,
+    appFolderState,
+    getFile,
+    currentFileIdState,
+    currentBlueprintFileIdState,
+    currentFileState,
+    currentBlueprintFileState,
+} from '../';
+import {
+    /**
+     * @namespace Playbook
+     */
     IPlaybookJson,
     IPlaybookCategory,
     IPlaybookScene,
     IPlaybookStep,
     IPlaybookTimeline,
     IPlaybookTimelineCodeData,
-    
+    /**
+     * @namespace Files
+     */
+    IStorageStatus,
+    IFolderList,
+    IFileStorageFile,
+    IFile,
+    IFileResp,
+    IFolderListResp,
 } from '../../models';
 
 type GetProps = { get: GetRecoilValue };
@@ -156,13 +185,76 @@ export const playbookTimelineState = selector<IPlaybookTimeline[]>({
         }
     },
 });
-//IPlaybookTimelineCodeData
-export const currentTimelineCodePanelsState = selector<IPlaybookTimeline[]>({
+interface ICode{
+    id: string;
+    start: number;
+    duration: number;
+    // templateFile:IFile;
+    // partialFiles:IFile[];
+    templateContent: string;
+    // partialContents: string[];
+    partials:IPartial[];
+}
+interface IPartial{
+    partialId: string;
+    start: number;
+    duration: number;
+    template: string;
+    template_data: {
+        [handlebarId: string]: string;
+    };
+    partialContent: string;
+}
+export const currentTimelineCodePanelsState = selector<ICode[]>({
     key: `currentTimelineCodePanelsState`,
-    get: ({get}: GetProps): IPlaybookTimeline[] => {
+    get: ({get}: GetProps): ICode[] => {
         const currentTimeline:IPlaybookTimeline[] = get(playbookTimelineState);
         const codeTimelines:IPlaybookTimeline[] = 
             currentTimeline.filter(timeline => timeline.hasOwnProperty('code'));
-        return codeTimelines;
+        
+        const codeBlocks:ICode[] = codeTimelines.map(codePanel => {
+            const {
+                id,
+                start,
+                duration,
+                code,
+            } = codePanel;
+
+            const {
+                template,
+                template_data,
+                partial_sections,
+                output,
+            } = code!;
+            const DEBUG_templateUrl = `https://610b8f8a2b6add0017cb392b.mockapi.io/template-hbs` || template;
+            const DEBUG_partialUrl = `https://610df94348beae001747b98c.mockapi.io/partial-01_hbs`;
+            const templateFile:IFile = get(getFile(DEBUG_templateUrl));
+            const templateContent:string = templateFile.file_content;
+            /*
+            const getPartialFiles = partial_sections.map(partial => getFile(DEBUG_partialUrl || partial.template))
+            const partialFiles:IFile[] = get(waitForAll(getPartialFiles));
+            const partialContents:string[] = partialFiles.map(file => file.file_content);
+            */
+           const partials:IPartial[] = partial_sections.map(partial => {
+               const partialFile:IFile = get(getFile(DEBUG_partialUrl || partial.template));
+               return {
+                    partialId: partial.partial_id,
+                    start: partial.start,
+                    duration: partial.duration,
+                    template: partial.template,
+                    template_data: partial.template_data,
+                    partialContent: partialFile.file_content,
+               }
+           });
+
+            return <ICode>{
+                id,
+                start,
+                duration,
+                templateContent,
+                partials,
+            }
+        });
+        return codeBlocks;
     },
 });

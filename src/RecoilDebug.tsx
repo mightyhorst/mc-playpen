@@ -14,6 +14,8 @@ import {
     currentPlaybookStepState,
     playbookTimelineState,
     currentTimelineCodePanelsState,
+    blueprintFolderState,
+    currentFileState,
 } from './recoil';
 
 function log(data:any){
@@ -24,11 +26,22 @@ export function RecoilDebug(){
     const currentPlaybookStep = useRecoilValue(currentPlaybookStepState);
     const playbookTimeline = useRecoilValue(playbookTimelineState);
     const currentTimelineCodePanels = useRecoilValue(currentTimelineCodePanelsState);
-    return (
+    const blueprintFolder = useRecoilValue(blueprintFolderState);
+    const currentFile = useRecoilValue(currentFileState);
+    return (<>
+        <h3>currentTimelineCodePanels</h3>
         <pre>
             {log(currentTimelineCodePanels)}
         </pre>
-    );
+        <h3>blueprintFolder</h3>
+        <pre>
+            {log(blueprintFolder)}
+        </pre>
+        <h3>currentFile</h3>
+        <pre>
+            {log(currentFile)}
+        </pre>
+    </>);
 }
 export function RecoilDebugSuspense(){
     return (
