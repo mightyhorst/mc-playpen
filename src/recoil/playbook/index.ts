@@ -78,6 +78,64 @@ export const playbookJsonState = selector<IPlaybookJson>({
         }
     }
 });
+type ITransformedPlaybook = {
+    cats: IPlaybookCategory[];
+    scenes: IPlaybookScene[];
+    steps: IPlaybookStep[];
+}
+export const transformedPlaybookState = selector<ITransformedPlaybook>({
+    key: 'transformedPlaybookState',
+    get: ({ get }: GetProps): ITransformedPlaybook => {
+        const playbookJson:IPlaybookJson = get(playbookJsonState);
+        const playbookCats = playbookJson.categories || [];
+        const cats:IPlaybookCategory[] = [];
+        const scenes:IPlaybookScene[] = [];
+        const steps:IPlaybookStep[] = [];
+        if(playbookCats){
+            for(let catIndex = 0; catIndex < playbookCats.length; catIndex++){
+                const cat = playbookCats[catIndex];
+                const catScenes = cat.scenes;
+                if(catScenes){
+                    for (let sceneIndex = 0; sceneIndex < catScenes.length; sceneIndex++) {
+                        const scene = catScenes[sceneIndex];
+                        scene.catId = cat.id;
+
+                        const sceneSteps = scene.steps;
+                        if(sceneSteps){
+                            for (let sceneIndex = 0; sceneIndex < sceneSteps.length; sceneIndex++) {
+                                const step = sceneSteps[sceneIndex];
+                                step.catId = cat.id;
+                                step.sceneId = scene.id;
+                                const transformedStep:IPlaybookStep = {
+                                    catId: cat.id,
+                                    sceneId: scene.id,
+                                    id: step.id,
+                                    title: step.title,
+                                    duration: step.duration,
+                                    timeline: step.timeline,
+                                    gitData: step.gitData,
+                                    windowSettings: step.windowSettings,
+                                };
+                                steps.push(transformedStep);
+                            }
+                        }
+
+                        delete scene.steps;
+                        scenes.push(scene);
+                    }
+                }
+                delete cat.scenes;
+                cats.push(cat);
+            }
+        }
+        
+        return {
+            cats,
+            scenes,
+            steps,
+        }
+    },
+});
 
 /**
  * @namespace Categories
@@ -92,6 +150,21 @@ export const playbookCategoriesState = selector<IPlaybookCategory[]>({
         return playbookJson.categories || [];
     },
 });
+/*
+export const transformedCategoriesState = selector<IPlaybookCategory[]>({
+    key: 'transformedCategoriesState',
+    get: ({ get }: GetProps): IPlaybookCategory[] => {
+        const playbookJson:IPlaybookJson = get(playbookJsonState);
+        console.log({playbookJson});
+        console.log({'playbookJson.categories':playbookJson.categories});
+        
+        return playbookJson.categories?.map(cat => {
+            delete cat.scenes;
+            return cat;
+        }) || [];
+    },
+});
+*/
 
 export const currentPlaybookCategoryIdState = atom<string>({
     key: 'currentPlaybookCategoryIdState',
@@ -123,13 +196,17 @@ export const playbookScenesState = selector<IPlaybookScene[]>({
     get: ({get}: GetProps): IPlaybookScene[] => {
         const curentPlaybookCategory:IPlaybookCategory|null = get(currentPlaybookCategoryState);
         if(curentPlaybookCategory){
-            return curentPlaybookCategory.scenes;
+            return curentPlaybookCategory.scenes.map(scene => {
+                scene.catId = curentPlaybookCategory.id;
+                return scene;
+            });
         }
         else{
             return [];
         }
     }
 });
+
 export const currentPlaybookSceneIdState = atom<string>({
     key: 'currentPlaybookSceneIdState',
     default: `scene00-define-a-grid-scene`,
@@ -151,7 +228,11 @@ export const playbookStepsState = selector<IPlaybookStep[]>({
     get: ({get}: GetProps): IPlaybookStep[] => {
         const curentPlaybookScene:IPlaybookScene|null = get(currentPlaybookSceneState);
         if(curentPlaybookScene){
-            return curentPlaybookScene.steps;
+            return curentPlaybookScene.steps.map(step => {
+                step.catId = curentPlaybookScene.catId;
+                step.sceneId = curentPlaybookScene.id;
+                return step;
+            });
         }
         else{
             return [];

@@ -19,21 +19,24 @@ export interface IPlaybookCategory {
 	title: string;
 	icon?: string;
 	colour?: string;
-	scenes: IPlaybookScene[];
+	scenes?: IPlaybookScene[];
 }
 
 export interface IPlaybookScene {
+	catId?: string;
 	id: string;
 	duration: number;
 	title: string;
-	steps: IPlaybookStep[];
+	steps?: IPlaybookStep[];
 }
 
 export interface IPlaybookStep {
+	catId?: string;
+	sceneId?: string;
 	id: string;
 	duration: number;
 	title: string;
-	gitData: IPlaybookGitData,
+	gitData?: IPlaybookGitData,
 	windowSettings?: IPlaybookJsonWindowSettings,
 	timeline: IPlaybookTimeline[];
 }
