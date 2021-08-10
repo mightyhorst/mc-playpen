@@ -14,6 +14,7 @@ export interface IPlaybookJson {
 }
 
 export interface IPlaybookCategory {
+	_uuid?: string; // <--- add a universally unique ID
 	id: string;
 	duration: number;
 	title: string;
@@ -23,6 +24,7 @@ export interface IPlaybookCategory {
 }
 
 export interface IPlaybookScene {
+	_uuid?: string; // <--- add a universally unique ID
 	catId?: string;
 	id: string;
 	duration: number;
@@ -30,39 +32,51 @@ export interface IPlaybookScene {
 	steps?: IPlaybookStep[];
 }
 
-export interface IPlaybookStep {
+export interface _IStep {
+	_uuid?: string; // <--- add a universally unique ID
 	catId?: string;
 	sceneId?: string;
 	id: string;
 	duration: number;
 	title: string;
-	gitData?: IPlaybookGitData,
-	windowSettings?: IPlaybookJsonWindowSettings,
-	timeline: IPlaybookTimeline[];
+	gitData?: IPlaybookGitData;
+	windowSettings?: IWindowSettings;
 }
-
+export interface IPlaybookStep extends _IStep {
+	timeline: ITimeline[];
+}
+export interface ITransformedStep extends IPlaybookStep {
+	descPanels:IDescription[];
+	codePanels:ICodePanel[];
+	testPanels:ITest[];
+	browserPanels:IBrowser[];
+	cliPanels:ITerminal[];
+	spreadsheetPanels:ISpreadsheet[];
+	audioPanels:IAudio[];
+	videoPanels:IVideo[];
+}
 
 export interface IPlaybookGitData {
 	branch?: string
 }
 
-export interface IPlaybookJsonWindowSettings {
-	browser?: IPlaybookJsonWindowSetting,
-	code?: IPlaybookJsonWindowSetting,
-	description?: IPlaybookJsonWindowSetting,
-	drawio?: IPlaybookJsonWindowSetting,
-	finder?: IPlaybookJsonWindowSetting,
-	playbar?: IPlaybookJsonWindowSetting,
-	sketch?: IPlaybookJsonWindowSetting,
-	terminal?: IPlaybookJsonWindowSetting,
-	test?: IPlaybookJsonWindowSetting,
-	trash?: IPlaybookJsonWindowSetting,
-	trello?: IPlaybookJsonWindowSetting,
-	video?: IPlaybookJsonWindowSetting,
-	spreadsheet?: IPlaybookJsonWindowSetting,
+export interface IWindowSettings {
+	browser?: IWindowSetting,
+	code?: IWindowSetting,
+	description?: IWindowSetting,
+	drawio?: IWindowSetting,
+	finder?: IWindowSetting,
+	playbar?: IWindowSetting,
+	sketch?: IWindowSetting,
+	terminal?: IWindowSetting,
+	test?: IWindowSetting,
+	trash?: IWindowSetting,
+	trello?: IWindowSetting,
+	video?: IWindowSetting,
+	spreadsheet?: IWindowSetting,
 }
 
-export interface IPlaybookJsonWindowSetting {
+export interface IWindowSetting {
 	isClosed?: boolean;
 	isMin?: boolean;
 	isMax?: boolean;
@@ -72,10 +86,10 @@ export interface IPlaybookJsonWindowSetting {
 	right?: number | string;
 	width?: number | string;
 	height?: number | string;
-	transitions?: IPlaybookJsonWindowSettingTransition[];
+	transitions?: IWindowSettingTransition[];
 }
 
-export interface IPlaybookJsonWindowSettingTransition {
+export interface IWindowSettingTransition {
 	start: number;
 	end: number;
 	isClosed?: boolean;
@@ -89,33 +103,53 @@ export interface IPlaybookJsonWindowSettingTransition {
 	height?: number | string;
 }
 
-export interface IPlaybookTimeline {
+
+export interface ITimeline {
+	_uuid?: string; // <--- add a universally unique ID
+	stepUuid?: string; // <--- points to uuid from step ID
 	id: string;
-	panel: string;
-	start: number | string;
+	panel: 'description'|'code'|'test'|'audio'|'spreadsheet'|'video'|'browser'|'terminal';
+	start: number;
 	duration: number;
 	end?: number;
-	description?: IPlaybookTimelineDescriptionHtml[];
-	code?: IPlaybookTimelineCodeData;
-	startCode?: IPlaybookTimelineStartCodeData;
-	browser?: IPlaybookTimelineBrowserData;
-	terminal?: IPlaybookTimelineTerminalData;
-	audio?: IPlaybookTimelineAudioData;
-	spreadsheet?: IPlaybookTimelineSpreadsheetData[];
+	comment?: string;
+	description?: IDescriptionHtml[];
+	code?: ICodeData;
+	test?: ITestData;
+	startCode?: IStartCodeData;
+	browser?: IBrowserData;
+	terminal?: ITerminalData;
+	audio?: IAudioData;
+	video?: IVideoData;
+	spreadsheet?: ISpreadsheetData[];
+}
+export interface ITime{
+	_uuid?: string; // <--- add a universally unique ID
+	id: string;
+	start: number;
+	duration: number;
+	end?: number;
 }
 
-export interface IPlaybookTimelineDescriptionHtml {
+export interface IDescriptionHtml {
 	tag: string;
 	txt?: string;
-	kids?: IPlaybookTimelineDescriptionHtml[];
+	kids?: IDescriptionHtml[];
 }
+/**
+ * @namespace TimelinePanels 
+ * @author Mitchy
+ */
+export type IDescription = ITime & {
+	description: IDescriptionHtml[];
+};
 
-export interface IPlaybookTimelineStartCodeData {
+export interface IStartCodeData {
 	start: string;
 	findReplace: string;
 }
 
-export interface IPlaybookTimelineCodeData {
+export interface ICodeData {
     // -- The master file that we will be printing to the screen. Contains handlebar data points that are to be defined in template_data
     template: string; 
     /* -- 
@@ -131,12 +165,12 @@ export interface IPlaybookTimelineCodeData {
     */
 	template_data: { [handlebarId: string]: string }; 
 	// -- An array of all partials to slow print to the master
-	partial_sections: IPlaybookTimelineCodePartialData[];
+	partial_sections: ICodePartialData[];
 	// -- The output file name (file name in fileStorage.app)
 	output: string;
 }
 
-export interface IPlaybookTimelineCodePartialData {
+export interface ICodePartialData {
 	partial_id: string;    // -- The handle bar id wrapped in {{}} that we will need to search for in the master file
 	start: number; // -- The start time to print this partial
 	duration: number; 		// -- Duration of printing this partial
@@ -144,27 +178,87 @@ export interface IPlaybookTimelineCodePartialData {
 	template_data: { [handlebarId: string]: string }; // -- The data we will use to compile the template
 }
 
+/**
+ * @namespace TimelinePanels 
+ * @author Mitchy
+ */
+export interface ICodePanel extends ITime{
+	template: string; 
+	template_data: { [handlebarId: string]: string }; 
+	partial_sections: ICodePartialData[];
+	output: string;
+}
+export interface ICodeWithContent{
+    id: string;
+    start: number;
+    duration: number;
+    // templateFile:IFile;
+    // partialFiles:IFile[];
+    templateContent: string;
+    // partialContents: string[];
+    partials:IPartial[];
+}
+export interface IPartial{
+    partialId: string;
+    start: number;
+    duration: number;
+    template?: string;
+    template_data?: {
+        [handlebarId: string]: string;
+    };
+    partialContent: string;
+}
+/**
+ * @todo Add a test interface
+ */
+export interface ITestData{
+	todo?: string; 
+}
+export interface ITest extends ITime{
+	todo?: string; 
+}
 
-export interface IPlaybookTimelineBrowserData {
+export interface IBrowserData {
 	url: string;
 	start?: number | string;
 }
+/**
+ * @namespace TimelinePanels 
+ * @author Mitchy
+ */
+export type IBrowser = ITime & {
+	url: string;
+};
 
-export interface IPlaybookTimelineTerminalData {
+export interface ITerminalData {
 	commands: string[];
 }
+/**
+ * @namespace TimelinePanels 
+ * @author Mitchy
+ */
+export type ITerminal = ITerminalData & ITime;
 
-export interface IPlaybookTimelineAudioData {
+export interface IAudioData {
 	url?: string;
 }
+export interface IVideoData {
+	url?: string;
+}
+/**
+ * @namespace TimelinePanels 
+ * @author Mitchy
+ */
+export type IAudio = IAudioData & ITime;
+export type IVideo = IVideoData & ITime;
 
-export interface IPlaybookTimelineSpreadsheetData{
+export interface ISpreadsheetData{
 	row: number;
 	col: number;
 	cellText?: string;
-	styles?: SpreadsheetStyles[];
+	styles?: ISpreadsheetStyles[];
 }
-export interface SpreadsheetStyles{
+export interface ISpreadsheetStyles{
 	bgcolor?: string;
 	textwrap?: boolean;
 	color?: string;
@@ -175,7 +269,17 @@ export interface SpreadsheetStyles{
 		right?: string[];
 	},
 }
+/**
+ * @namespace TimelinePanels 
+ * @author Mitchy
+ */
+export type ISpreadsheet = ITime & {
+	spreadsheet: ISpreadsheetData[];
+};
 
+/**
+ * @namespace Dashboard
+ */
 export interface IPlaybookJsonOutline {
 	_id: string;
 	workspace: string;
