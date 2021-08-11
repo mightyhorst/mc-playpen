@@ -53,3 +53,32 @@ input, select{
 textarea{
   min-height: 250px;
 }
+
+/**
+ * @layout
+ */
+#root{
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+main{
+  display: block;
+  flex: 1 1;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+aside{
+  display: block;
+  flex: 0 0 350px;
+  height: 100%;
+  width: 350px;
+  box-shadow: -1px -1px 5px rgb(0 0 0 / 50%);
+  background: rgba(0,0,0,.5);
+  padding: 20px;
+  overflow: scroll;
+  border-left: 1px solid rgb(0 0 0 / 20%);
+}
