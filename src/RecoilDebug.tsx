@@ -51,9 +51,24 @@ export function TimelineForm({
         duration,
     } = timeline;
     return (<>
-        <input type="text" value={id} onChange={(e) => changeId(e.target.value)} />
-        <input type="text" value={start} onChange={(e) => changeStart(parseInt(e.target.value))} />
-        <input type="text" value={duration} onChange={(e) => changeDuration(parseInt(e.target.value))} />
+        <label >
+            <p>
+                ID 
+            </p>
+            <input type="text" value={id} onChange={(e) => changeId(e.target.value)} />
+        </label>
+        <label >
+            <p>
+                start 
+            </p>
+            <input type="text" value={start} onChange={(e) => changeStart(parseInt(e.target.value))} />
+        </label>
+        <label >
+            <p>
+                duration 
+            </p>
+            <input type="text" value={duration} onChange={(e) => changeDuration(parseInt(e.target.value))} />
+        </label>
     </>)
 }
 export function DescriptionForm(){
@@ -67,51 +82,63 @@ export function DescriptionForm(){
         setCurrentDescription,
     ] = useRecoilState(currentDescriptionPanelState);
     console.log({currentDescription})
-    return (<section>
-        <input type="text" defaultValue={currentDescriptionPanelId} />
-        <select 
-            onChange={e => setCurrentDescriptionPanelId(e.target.value)}
-            value={currentDescriptionPanelId}
-        >
-            {descriptionPanels.map(desc => {
-                return (
-                    <option 
-                        key={desc.id} 
-                        defaultChecked={desc.id === currentDescriptionPanelId}
-                    >
-                        {desc.id}
-                    </option>
-                );
-            })}
-        </select>
-        {currentDescription && 
-            <TimelineForm 
-                timeline={currentDescription}
-                changeId={(id: string) => {
-                    setCurrentDescription({
-                        ...currentDescription,
-                        id,
-                    });
-                }}
-                changeStart= {(start: number) => {
-                    setCurrentDescription({
-                        ...currentDescription,
-                        start,
-                    });
-                }}
-                changeDuration={(duration: number)  => {
-                    setCurrentDescription({
-                        ...currentDescription,
-                        duration,
-                    });
-                }}
-            />
-        }
+    return (<>
+        <form>
+            <label >
+                <p>
+                    currentDescriptionPanelId
+                </p>
+                <input type="text" defaultValue={currentDescriptionPanelId} />
+            </label>
+            <label >
+                <p>
+                    currentDescriptionPanelId
+                </p>
+                <select 
+                    onChange={e => setCurrentDescriptionPanelId(e.target.value)}
+                    value={currentDescriptionPanelId}
+                >
+                    {descriptionPanels.map(desc => {
+                        return (
+                            <option 
+                                key={desc.id} 
+                                defaultChecked={desc.id === currentDescriptionPanelId}
+                            >
+                                {desc.id}
+                            </option>
+                        );
+                    })}
+                </select>
+            </label >
+            {currentDescription && 
+                <TimelineForm 
+                    timeline={currentDescription}
+                    changeId={(id: string) => {
+                        setCurrentDescription({
+                            ...currentDescription,
+                            id,
+                        });
+                    }}
+                    changeStart= {(start: number) => {
+                        setCurrentDescription({
+                            ...currentDescription,
+                            start,
+                        });
+                    }}
+                    changeDuration={(duration: number)  => {
+                        setCurrentDescription({
+                            ...currentDescription,
+                            duration,
+                        });
+                    }}
+                />
+            }
+        </form>
         <h3>currentDescription</h3>
         <pre>
             {log(currentDescription)}
         </pre>
-    </section>)
+    </>)
 }
 
 export function RecoilDebug(){

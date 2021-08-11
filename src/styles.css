@@ -12,4 +12,39 @@ body {
   min-height: 100vh;
   overflow-x: hidden;
   font-family: 'helvetica neue', Raleway, helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+form{
+  display: flex;
+  flex-direction: column;
+  width: calc(100% - 40px);
+  margin: 20px;
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 4px;
+  padding: 20px;
+}
+label{
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  padding: 10px 20px;
+  align-items: center;
+  justify-content: space-between;
+}
+label > p{
+  display: flex;
+  flex: 0 0 200px;
+}
+input, select{
+  display: flex;
+  flex: 1 1;
+  line-height: 25px;
+  height: 25px;
+  border: 1px solid rgba(0,0,0,.1);
+  border-radius: 4px;
+  background: white;
+  text-indent: 10px;
+  box-shadow: 0 0 1px 1px rgb(255 255 255);
+  -webkit-font-smoothing: antialiased;
+  font-weight: 600;
 }
