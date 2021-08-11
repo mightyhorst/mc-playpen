@@ -1,29 +1,11 @@
 import axios from 'axios';
-import { compile as hbsCompile } from 'handlebars';
 import { v4 as uuid } from 'uuid';
 import {
     atom,
-    atomFamily,
     selector,
-    GetRecoilValue,
-    selectorFamily,
-    waitForAll,
-    SetRecoilState,
-    ResetRecoilState,
     DefaultValue,
     AtomEffect
 } from 'recoil';
-import {
-    currentBlueprintIdState,
-    currentAppIdState,
-    blueprintFolderState,
-    appFolderState,
-    getFile,
-    currentFileIdState,
-    currentBlueprintFileIdState,
-    currentFileState,
-    currentBlueprintFileState
-} from '../';
 import {
     /**
      * @namespace Playbook
@@ -31,11 +13,8 @@ import {
     IPlaybookJson,
     IPlaybookCategory,
     IPlaybookScene,
-    IPlaybookStep,
     ITimeline,
     ITime,
-    ICodeWithContent,
-    IPartial,
     IDescription,
     IBrowser,
     ITerminal,
@@ -49,9 +28,9 @@ import {
     ICodePanel,
     IVideo,
     ITransformedStep
-} from '../../models';
+} from '../../../models';
 
-import { GetProps, SetProps } from '../types';
+import { GetProps, SetProps } from '../../types';
 
 export const playbookAuthourState = atom<string>({
     key: 'playbookAuthourState',
@@ -110,7 +89,7 @@ export const playbookJsonState = atom({
             }
         },
         set: async ({get,set}: SetProps, updatedPlaybook: IPlaybookJson | DefaultValue) => {
-
+            console.log(`%c Set PlaybookJson Should never fire`, 'background: red; color: white');
         },
     }),
     effects_UNSTABLE: [
@@ -353,370 +332,4 @@ export const transformedPlaybookState = selector<ITransformedPlaybook>({
     set: ({get,set}: SetProps, updatedPlaybook: ITransformedPlaybook | DefaultValue) => {
 
     },
-});
-
-/**
- * @namespace Categories
- */
-// export const playbookCategoriesState = selector<IPlaybookCategory[]>({
-export const categoriesState = atom<IPlaybookCategory[]>({
-    key: 'categoriesState',
-    default: selector<IPlaybookCategory[]>({
-        key: 'categoriesState/default',
-        get: ({ get }: GetProps): IPlaybookCategory[] => {
-            const { cats } = get(transformedPlaybookState);
-            return cats;
-        }
-    })
-});
-export const getCategoryById = atomFamily<IPlaybookCategory | null, string>({
-    key: 'getCategoryById',
-    default: selectorFamily<IPlaybookCategory | null, string>({
-        key: 'getCategoryById/default',
-        get: (catId: string) => ({
-            get
-        }: GetProps): IPlaybookCategory | null => {
-            const { cats } = get(transformedPlaybookState);
-            return cats.find((cat) => cat.id === catId) || null;
-        }
-    })
-});
-export const currentCatIdState = atom<string>({
-    key: 'currentCatIdState',
-    default: `cat00-css-grid`
-});
-/*
-export const playbookCategoryIdsState = selector<string[]>({
-    key: 'playbookCategoryIds',
-    get: ({get}: GetProps): string[] => {
-        const playbookCategories:IPlaybookCategory[] = get(playbookCategoriesState);
-        return playbookCategories.map(cat => cat.id);
-    }
-});
-*/
-export const currentCatState = selector<IPlaybookCategory | null>({
-    key: 'currentCatState',
-    get: ({ get }: GetProps): IPlaybookCategory | null => {
-        const categoryId: string = get(currentCatIdState);
-        // const playbookCategories:IPlaybookCategory[] = get(playbookCategoriesState);
-        // return playbookCategories.find(cat => cat.id === currentPlaybookCategoryId) || null;
-        return get(getCategoryById(categoryId));
-    }
-});
-
-/**
- * @namespace Scenes
- */
-export const scenesState = selector<IPlaybookScene[]>({
-    key: 'scenesState',
-    get: ({ get }: GetProps): IPlaybookScene[] => {
-        const { scenes } = get(transformedPlaybookState);
-        return scenes;
-    }
-});
-export const getSceneById = atomFamily<IPlaybookScene | null, string>({
-    key: 'getSceneById',
-    default: selectorFamily<IPlaybookScene | null, string>({
-        key: 'getSceneById/default',
-        get: (sceneId: string) => ({
-            get
-        }: GetProps): IPlaybookScene | null => {
-            const { scenes } = get(transformedPlaybookState);
-            return scenes.find((scene) => scene.id === sceneId) || null;
-        }
-    })
-});
-export const currentSceneIdState = atom<string>({
-    key: 'currentSceneIdState',
-    default: `scene00-define-a-grid-scene`
-});
-export const currentSceneState = selector<IPlaybookScene | null>({
-    key: 'currentSceneState',
-    get: ({ get }: GetProps): IPlaybookScene | null => {
-        const currentSceneId: string = get(currentSceneIdState);
-        return get(getSceneById(currentSceneId));
-    }
-});
-
-/**
- * @namespace Steps
- */
-export const stepsState = selector<ITransformedStep[]>({
-    key: 'stepsState',
-    get: ({ get }: GetProps): ITransformedStep[] => {
-        const { steps } = get(transformedPlaybookState);
-        return steps;
-    }
-});
-export const getStepById = atomFamily<ITransformedStep | null, string>({
-    key: 'getStepById',
-    default: selectorFamily<ITransformedStep | null, string>({
-        key: 'getStepById/default',
-        get: (stepId: string) => ({
-            get
-        }: GetProps): ITransformedStep | null => {
-            const { steps } = get(transformedPlaybookState);
-            return steps.find((step) => step.id === stepId) || null;
-        }
-    })
-});
-export const currentStepIdState = atom<string>({
-    key: 'currentStepIdState',
-    default: `step00-define-a-grid`
-});
-export const currentStepState = selector<ITransformedStep | null>({
-    key: 'currentStepState',
-    get: ({ get }: GetProps): ITransformedStep | null => {
-        const currentStepId: string = get(currentStepIdState);
-        return get(getStepById(currentStepId));
-    }
-});
-
-/**
- * @namespace Timeline
- */
-export const timelineState = selector<ITimeline[]>({
-    key: 'timelineState',
-    get: ({ get }: GetProps): ITimeline[] => {
-        const currentPlaybookStep: ITransformedStep | null = get(
-            currentStepState
-        );
-        if (currentPlaybookStep) {
-            return currentPlaybookStep.timeline.map(
-                (panel) =>
-                    <ITimeline>{
-                        ...panel,
-                        stepUuid: panel._uuid
-                    }
-            );
-        } else {
-            return [];
-        }
-    },
-    set: (
-        { get, set, reset, }: SetProps, 
-        newValue: ITimeline[] | DefaultValue,
-    ) => {
-
-    },
-});
-/**
- * @namespace DescriptionTimelines
- */
-export const descriptionsState = selector<ITimeline[]>({
-    key: `descriptionsState`,
-    get: ({ get }: GetProps): ITimeline[] => {
-        const stepTimeline: ITimeline[] = get(timelineState);
-        const descriptionPanels: ITimeline[] = stepTimeline.filter((timeline) =>
-            timeline.hasOwnProperty('description')
-        );
-        return descriptionPanels;
-    }
-});
-export const currentDescriptionIdState = atom<string>({
-    key: 'currentDescriptionIdState',
-    default: '1'
-});
-export const getDescriptionById = selectorFamily<ITimeline | null, string>({
-    key: 'getDescriptionById',
-    get: (descPanelId: string) => ({ get }: GetProps): ITimeline | null => {
-        const descriptionTimelines: ITimeline[] = get(descriptionsState);
-        return descriptionTimelines.find((descPanel) => descPanel.id.toString() === descPanelId.toString()) || null;
-    },
-    set: (descPanelId: string) => (
-        {
-            get,
-            set
-        }: {
-            set: SetRecoilState;
-            get: GetRecoilValue;
-            reset: ResetRecoilState;
-        },
-        newValue: ITimeline | DefaultValue | null
-    ) => {
-        const steps = get(stepsState);
-        if (newValue && !(newValue instanceof DefaultValue)) {
-            const step = steps.find((step) => step._uuid === newValue.stepUuid);
-            const filteredTimelines =
-                step?.timeline.filter(
-                    (timeline) => timeline.panel === 'description' && timeline.id !== newValue.id
-                ) || [];
-            const updatedTimelines = [...filteredTimelines, newValue];
-            console.log(`getDescriptionTimelineById set--->`, {
-                step,
-                filteredTimelines,
-                updatedTimelines
-            });
-            if (step) {
-                set(getStepById(step.id), {
-                    ...step,
-                    timeline: updatedTimelines
-                });
-            }
-        }
-        else{
-
-        }
-    },
-});
-export const currentDescriptionState = selector<ITimeline | null>({
-    key: 'currentDescriptionState',
-    get: ({ get }: GetProps): ITimeline | null => {
-        const currentDescriptionPanelId = get(currentDescriptionIdState);
-        const descTimeline = get(getDescriptionById(currentDescriptionPanelId));
-        return descTimeline;
-    },
-    set: ({
-        get,
-        set,
-    }: { 
-        set: SetRecoilState; 
-        get: GetRecoilValue; 
-        reset: ResetRecoilState; 
-    }, 
-    newValue: ITimeline | DefaultValue | null) =>{
-        const currentDescriptionPanelId = get(currentDescriptionIdState);
-        set(getDescriptionById(currentDescriptionPanelId), newValue);
-    },
-});
-/**
- * @namespace CodeTimeline
- */
-export const codeTimelinesState = selector<ITimeline[]>({
-    key: `codeTimelinesState`,
-    get: ({ get }: GetProps): ITimeline[] => {
-        const currentTimeline: ITimeline[] = get(timelineState);
-        const codeTimelines: ITimeline[] = currentTimeline.filter((timeline) =>
-            timeline.hasOwnProperty('code')
-        );
-        return codeTimelines;
-    }
-});
-export const currentCodePanelIdState = atom<string>({
-    key: 'currentCodePanelId',
-    default: '1'
-});
-export const getCodeTimelineById = selectorFamily<ITimeline | null, string>({
-    // export const getCodeTimelineById = atomFamily<ITimeline|null, string>({
-    key: 'getCodeTimelineById',
-    // default: selectorFamily<ITimeline|null, string>({
-    // key: 'getCodeTimelineById/default',
-    get: (panelId: string) => ({ get }: GetProps): ITimeline | null => {
-        const codeTimelines: ITimeline[] = get(codeTimelinesState);
-        return codeTimelines.find((panel) => panel.id.toString() === panelId.toString()) || null;
-    },
-    set: (panelId: string) => (
-        {
-            get,
-            set
-        }: {
-            set: SetRecoilState;
-            get: GetRecoilValue;
-            reset: ResetRecoilState;
-        },
-        newValue: ITimeline | DefaultValue | null
-    ) => {
-        const steps = get(stepsState);
-        if (newValue && !(newValue instanceof DefaultValue)) {
-            const step = steps.find((step) => step._uuid === newValue.stepUuid);
-            const filteredTimelines =
-                step?.timeline.filter(
-                    (timeline) => timeline.panel === 'code' && timeline.id !== newValue.id
-                ) || [];
-            const updatedTimelines = [...filteredTimelines, newValue];
-            console.log(`getCodeTimelineById set--->`, {
-                step,
-                filteredTimelines,
-                updatedTimelines
-            });
-            if (step) {
-                set(getStepById(step.id), {
-                    ...step,
-                    timeline: updatedTimelines
-                });
-            }
-        } else {
-        }
-    }
-    // }),
-});
-export const codeWithContentTimelinesState = selector<ICodeWithContent[]>({
-    key: `codeWithContentTimelinesState`,
-    get: ({ get }: GetProps): ICodeWithContent[] => {
-        const codeTimelines: ITimeline[] = get(codeTimelinesState);
-
-        const codeBlocks: ICodeWithContent[] = codeTimelines.map(
-            (codePanel: ITimeline) => {
-                const { id, start, duration, code } = codePanel;
-
-                const {
-                    template,
-                    template_data,
-                    partial_sections,
-                    output
-                } = code!;
-                const DEBUG_templateUrl =
-                    `https://610b8f8a2b6add0017cb392b.mockapi.io/template-hbs` ||
-                    template;
-                const DEBUG_partialUrl = `https://610df94348beae001747b98c.mockapi.io/partial-01_hbs`;
-                const templateFile: IFile = get(getFile(DEBUG_templateUrl));
-
-                /**
-                 * @step handlebars
-                 */
-                let templateContent: string = templateFile.file_content;
-                if (template_data) {
-                    const hbsTemplate = hbsCompile(templateFile.file_content);
-                    templateContent = hbsTemplate(template_data);
-                }
-
-                /*
-            const getPartialFiles = partial_sections.map(partial => getFile(DEBUG_partialUrl || partial.template))
-            const partialFiles:IFile[] = get(waitForAll(getPartialFiles));
-            const partialContents:string[] = partialFiles.map(file => file.file_content);
-            */
-                const partials: IPartial[] = partial_sections.map((partial) => {
-                    const partialFile: IFile = get(
-                        getFile(DEBUG_partialUrl || partial.template)
-                    );
-
-                    /**
-                     * @step handlebars
-                     */
-                    let partialContent: string = partialFile.file_content;
-                    if (partial.template_data) {
-                        const hbsTemplate = hbsCompile(
-                            partialFile.file_content
-                        );
-                        partialContent = hbsTemplate(partial.template_data);
-                    }
-
-                    return {
-                        partialId: partial.partial_id,
-                        start: partial.start,
-                        duration: partial.duration,
-                        // template: partial.template,
-                        partialContent
-                    };
-                });
-
-                return <ICodeWithContent>{
-                    id,
-                    start,
-                    duration,
-                    templateContent,
-                    partials
-                };
-            }
-        );
-        return codeBlocks;
-    }
-});
-export const currentCodePanelState = selector<ITimeline | null>({
-    key: 'currentCodePanelState',
-    get: ({ get }: GetProps): ITimeline | null => {
-        const currentCodePanelId = get(currentCodePanelIdState);
-        const codeTimeline = get(getCodeTimelineById(currentCodePanelId));
-        return codeTimeline;
-    }
 });
