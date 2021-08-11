@@ -7,7 +7,7 @@ import {
     useRecoilState,
     useRecoilValue, 
 } from 'recoil';
-import { IFile, ITimeline } from './models';
+import { IFile, ITimeline } from '../models';
 import {
     scenesState,
     currentSceneIdState,
@@ -28,7 +28,7 @@ import {
     currentDescriptionPanelIdState,
     descriptionTimelinesState,
     currentDescriptionPanelState,
-} from './recoil';
+} from '../recoil';
 
 function log(data:any){
     return JSON.stringify(data, null, 4);
@@ -84,11 +84,12 @@ export function DescriptionForm(){
     console.log({currentDescription})
     return (<>
         <form>
+            <h3> Current Description: </h3>
             <label >
                 <p>
                     currentDescriptionPanelId
                 </p>
-                <input type="text" defaultValue={currentDescriptionPanelId} />
+                <pre> {currentDescriptionPanelId} </pre>
             </label>
             <label >
                 <p>
@@ -133,6 +134,14 @@ export function DescriptionForm(){
                     }}
                 />
             }
+            <label>
+                <p>
+                    Description
+                </p>
+                <textarea 
+                    defaultValue={log(currentDescription?.description) || ''}
+                />
+            </label>
         </form>
         <h3>currentDescription</h3>
         <pre>

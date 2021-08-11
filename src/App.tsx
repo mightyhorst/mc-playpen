@@ -19,7 +19,9 @@ import {
 import {
   RecoilRoot,
 } from 'recoil';
-import RecoilDebug from './RecoilDebug';
+import {
+  RecoilDebug,
+} from './RecoilDebug';
 
 /**
  * @requires Hooks
