@@ -147,7 +147,7 @@ export function DescriptionForm(){
         <pre>
             {log(currentDescription)}
         </pre>
-    </>)
+    </>);
 }
 
 export function RecoilDebug(){
