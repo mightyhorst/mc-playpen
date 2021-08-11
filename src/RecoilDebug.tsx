@@ -7,7 +7,7 @@ import {
     useRecoilState,
     useRecoilValue, 
 } from 'recoil';
-import { IFile, ITimeline } from '../models';
+import { IFile, ITimeline } from './models';
 import {
     scenesState,
     currentSceneIdState,
@@ -28,7 +28,7 @@ import {
     currentDescriptionIdState,
     descriptionsState,
     currentDescriptionState,
-} from '../recoil';
+} from './recoil';
 
 function log(data:any){
     return JSON.stringify(data, null, 4);
