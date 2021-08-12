@@ -7,9 +7,7 @@ import {
     isDefault,
 } from '../../types';
 import { 
-    getStepById, 
-    stepsState, 
-    timelineState, 
+    listTimelineState,
 } from '..';
 import {
     atom,
@@ -24,6 +22,7 @@ import {
 import {
     ITimeline,
 } from '../../../models';
+import { updateTimelineState } from '../timeline';
 
 /**
  * @namespace DescriptionTimelines
@@ -31,46 +30,48 @@ import {
 export const listDescriptionsState = selector<ITimeline[]>({
     key: `listDescriptionsState`,
     get: ({ get }: GetProps): ITimeline[] => {
-        const stepTimeline: ITimeline[] = get(timelineState);
+        const stepTimeline: ITimeline[] = get(listTimelineState);
         const descriptionPanels: ITimeline[] = stepTimeline.filter((timeline) =>
             timeline.hasOwnProperty('description') && timeline.panel === 'description'
         );
         return descriptionPanels;
     },
-    set: ({ get, set, reset, }:SetProps, updatedTimeline:ITimeline[]) => {
-        set(timelineState, updatedTimeline);
+    set: ({ get, set, reset, }:SetProps, updatedTimeline:ITimeline[] | DefaultValue) => {
+        set(listTimelineState, updatedTimeline);
     },
 });
 
-export const descriptionById = selectorFamily<ITimeline | null, string>({
+export const findDescriptionById = selectorFamily<ITimeline | null, string>({
     key: 'descriptionById',
     get: (descPanelId: string) => ({ get }: GetProps): ITimeline | null => {
         const descriptionTimelines: ITimeline[] = get(listDescriptionsState);
-        return descriptionTimelines.find((descPanel) => descPanel.id.toString() === descPanelId.toString()) || null;
+        return descriptionTimelines.find((descPanel) => descPanel._uuid?.toString() === descPanelId.toString()) || null;
     },
     set: (descPanelId: string) => (
         { get, set }: SetProps,
-        newValue: ITimeline | DefaultValue | null,
+        updatedDesc: ITimeline | DefaultValue | null,
     ) => {
-        const steps = get(stepsState);
-        if (newValue && !(newValue instanceof DefaultValue)) {
-            const step = steps.find((step) => step._uuid === newValue.stepUuid);
-            const filteredTimelines =
-                step?.timeline.filter(
-                    (timeline) => timeline.panel === 'description' && timeline.id !== newValue.id
-                ) || [];
-            const updatedTimelines = [...filteredTimelines, newValue];
-            console.log(`getDescriptionTimelineById set--->`, {
-                step,
-                filteredTimelines,
-                updatedTimelines
+        // const steps = get(listStepsState);
+        if (updatedDesc && !isDefault(updatedDesc)) {
+            console.log(`findDescriptionById`, {
+                descPanelId,
+                updatedDesc,
             });
-            if (step) {
-                set(getStepById(step.id), {
-                    ...step,
-                    timeline: updatedTimelines
-                });
-            }
+            // const step = steps.find((step) => step._uuid === updatedDesc.stepUuid);
+            // const filteredTimelines =
+            //     step?.timeline.filter(
+            //         (timeline) => timeline.panel === 'description' && timeline.id !== updatedDesc.id
+            //     ) || [];
+            // const descriptions: ITimeline[] = get(listDescriptionsState);
+            // const filteredTimelines = descriptions.find((descPanel) => descPanel.id.toString() !== descPanelId.toString()) || null;
+            // const timelines = [...filteredTimelines, updatedDesc];
+            set(updateTimelineState(descPanelId), updatedDesc);
+            // if (step) {
+            //     set(findStepById(step.id), {
+            //         ...step,
+            //         timeline: descriptions
+            //     });
+            // }
         }
         else{
 
@@ -84,13 +85,13 @@ export const descriptionById = selectorFamily<ITimeline | null, string>({
  */
 export const showDescriptionIdState = atom<string>({
     key: 'showDescriptionIdState',
-    default: null,
+    default: '',
 });
 export const showDescriptionState = selector<ITimeline | null>({
     key: `showDescriptionState`,
     get: ({ get }: GetProps): ITimeline | null => {
         const descriptionId = get(showDescriptionIdState);
-        const description = get(descriptionById(descriptionId));
+        const description = get(findDescriptionById(descriptionId));
         return description;
     },
 });
@@ -103,15 +104,12 @@ export const createDescriptionState = selector<ITimeline | null>({
     get: () => null,
     set: (
         { get, set }: SetProps,
-        addDesc: ITimeline | DefaultValue,     
+        createdDesc: ITimeline | DefaultValue | null,     
     ): void => {
-        if(!isDefault(addDesc)){
-            const descriptions = get(listDescriptionsState);
-            const updatedDescriptions = [
-                ...descriptions,
-                addDesc,
-            ]; 
-            set(listDescriptionsState, updatedDescriptions);
+        if(!isDefault(createdDesc) && createdDesc){
+            const descriptions:ITimeline[] = get(listDescriptionsState);
+            descriptions.push(<ITimeline>createdDesc);
+            set(listDescriptionsState, descriptions);
         }
     },
 });
@@ -119,14 +117,20 @@ export const createDescriptionState = selector<ITimeline | null>({
  * @namespace CRUD
  * @name Update
  */
-export const updateDescriptionState = selectorFamily<ITimeline | null, string>({
+export const updateDescriptionState = selectorFamily<ITimeline|null, string>({
     key: `updateDescriptionState`,
-    get: () => null,
+    get: () => () => null,
     set: (descId:string) => (
         { get, set }: SetProps,
-        updateValue: ITimeline | DefaultValue,     
+        updatedDesc: ITimeline | DefaultValue | null,     
     ): void => {
-        set(descriptionById(descId), updateValue);
+        if(!isDefault(updatedDesc) && updatedDesc){
+            console.log(`updateDescriptionState`, {
+                descId,
+                updatedDesc,
+            });
+            set(findDescriptionById(descId), updatedDesc);
+        }
     },
 });
 
@@ -139,9 +143,9 @@ export const deleteDescriptionState = selector<string | null>({
     get: () => null,
     set: (
         { get, set }: SetProps,
-        descId: string | DefaultValue,     
+        descId: string | DefaultValue | null,     
     ): void => {
-        if(!isDefault(descId)){
+        if(!isDefault(descId) && descId){
             const descriptions = get(listDescriptionsState);
             const updatedDescriptions = descriptions.filter(
                 desc => desc._uuid !== descId

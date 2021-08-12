@@ -6,10 +6,7 @@ import {
     SetProps,
     isDefault,
 } from '../../types';
-import { 
-    getStepById, 
-    stepsState, 
-    timelineState,
+import {
     transformedPlaybookState, 
 } from '..';
 import {
@@ -24,6 +21,7 @@ import {
  */
 import {
     ITransformedStep,
+    ITransformedPlaybook,
 } from '../../../models';
 
 /**
@@ -35,43 +33,50 @@ export const listStepsState = selector<ITransformedStep[]>({
         const { steps } = get(transformedPlaybookState);
         return steps;
     },
-    set: ({ get, set, reset, }:SetProps, updatedStep:ITransformedStep[]) => {
-        set(transformedPlaybookState, updatedStep);
+    set: ({ get, set, reset, }:SetProps, updatedSteps:ITransformedStep[] | DefaultValue) => {
+        if(updatedSteps && !isDefault(updatedSteps) ){
+            console.log(`listStepsState`, {
+                updatedSteps,
+            });
+            const playbook = get(transformedPlaybookState);
+            playbook.steps = <ITransformedStep[]>updatedSteps;
+            const updatedPlaybook:ITransformedPlaybook = {
+                ...playbook,
+                steps: <ITransformedStep[]>updatedSteps,
+            };
+            set(transformedPlaybookState, updatedPlaybook);
+        }
     },
 });
 
-export const StepById = selectorFamily<ITimeline | null, string>({
-    key: 'StepById',
-    get: (descPanelId: string) => ({ get }: GetProps): ITimeline | null => {
-        const StepTimelines: ITimeline[] = get(listStepsState);
-        return StepTimelines.find((descPanel) => descPanel.id.toString() === descPanelId.toString()) || null;
-    },
-    set: (descPanelId: string) => (
-        { get, set }: SetProps,
-        newValue: ITimeline | DefaultValue | null,
-    ) => {
-        const steps = get(stepsState);
-        if (newValue && !(newValue instanceof DefaultValue)) {
-            const step = steps.find((step) => step._uuid === newValue.stepUuid);
-            const filteredTimelines =
-                step?.timeline.filter(
-                    (timeline) => timeline.panel === 'Step' && timeline.id !== newValue.id
-                ) || [];
-            const updatedTimelines = [...filteredTimelines, newValue];
-            console.log(`getStepTimelineById set--->`, {
+export const findStepById = selectorFamily<ITransformedStep | null, string>({
+    key: 'findStepById',
+    get: (stepUuid: string) => ({ get }: GetProps): ITransformedStep | null => {
+        const steps = get(listStepsState);
+        return steps.find((step) => {
+            console.log({
+                'step._uuid': step._uuid,
+                stepUuid,
+                'step._uuid?.toString() === stepUuid.toString()': step._uuid?.toString() === stepUuid.toString(),
                 step,
-                filteredTimelines,
-                updatedTimelines
             });
-            if (step) {
-                set(getStepById(step.id), {
-                    ...step,
-                    timeline: updatedTimelines
-                });
-            }
-        }
-        else{
-
+            
+            return step._uuid?.toString() === stepUuid.toString();
+        }) || null;
+    },
+    set: (stepUuid: string) => (
+        { get, set }: SetProps,
+        updatedStep: ITransformedStep | DefaultValue | null,
+    ) => {
+        if (updatedStep && !isDefault(updatedStep)) {
+            console.log(`findStepById`, {
+                stepUuid,
+                updatedStep,
+            });
+            const steps = get(listStepsState);
+            const updatedSteps = steps.filter((step) => step._uuid !== stepUuid);
+            updatedSteps.push(<ITransformedStep>updatedStep);
+            set(listStepsState, updatedSteps);
         }
     },
 });
@@ -82,34 +87,31 @@ export const StepById = selectorFamily<ITimeline | null, string>({
  */
 export const showStepIdState = atom<string>({
     key: 'showStepIdState',
-    default: null,
+    default: '',
 });
-export const showStepState = selector<ITimeline | null>({
+export const showStepState = selector<ITransformedStep | null>({
     key: `showStepState`,
-    get: ({ get }: GetProps): ITimeline | null => {
-        const StepId = get(showStepIdState);
-        const Step = get(StepById(StepId));
-        return Step;
+    get: ({ get }: GetProps): ITransformedStep | null => {
+        const stepId = get(showStepIdState);
+        const step = get(findStepById(stepId));
+        return step;
     },
 });
 /**
  * @namespace CRUD
  * @name Create
  */
-export const createStepState = selector<ITimeline | null>({
+export const createStepState = selector<ITransformedStep | null>({
     key: `createStepState`,
     get: () => null,
     set: (
         { get, set }: SetProps,
-        addDesc: ITimeline | DefaultValue,     
+        addDesc: ITransformedStep | DefaultValue | null,
     ): void => {
         if(!isDefault(addDesc)){
-            const Steps = get(listStepsState);
-            const updatedSteps = [
-                ...Steps,
-                addDesc,
-            ]; 
-            set(listStepsState, updatedSteps);
+            const steps = get(listStepsState);
+            steps.push(<ITransformedStep>addDesc);
+            set(listStepsState, steps);
         }
     },
 });
@@ -117,14 +119,19 @@ export const createStepState = selector<ITimeline | null>({
  * @namespace CRUD
  * @name Update
  */
-export const updateStepState = selectorFamily<ITimeline | null, string>({
+export const updateStepState = selectorFamily<ITransformedStep | null, string>({
     key: `updateStepState`,
-    get: () => null,
+    get: () => () => null,
     set: (descId:string) => (
         { get, set }: SetProps,
-        updateValue: ITimeline | DefaultValue,     
+        updatedStep: ITransformedStep | DefaultValue | null,
     ): void => {
-        set(StepById(descId), updateValue);
+        if(updatedStep && !isDefault(updatedStep)){
+            console.log(`updateStepState`, {
+                updatedStep
+            });
+            set(findStepById(descId), updatedStep);
+        }
     },
 });
 
@@ -137,11 +144,11 @@ export const deleteStepState = selector<string | null>({
     get: () => null,
     set: (
         { get, set }: SetProps,
-        descId: string | DefaultValue,     
+        descId: string | DefaultValue | null,
     ): void => {
         if(!isDefault(descId)){
-            const Steps = get(listStepsState);
-            const updatedSteps = Steps.filter(
+            const steps = get(listStepsState);
+            const updatedSteps = steps.filter(
                 desc => desc._uuid !== descId
             );
             set(listStepsState, updatedSteps);

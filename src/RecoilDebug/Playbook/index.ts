@@ -7,3 +7,5 @@ export * from './Spreadsheet';
 export * from './Test';
 export * from './Timeline';
 export * from './Video';
+export * from './log';
+export {default as TimeForm} from './TimeForm';

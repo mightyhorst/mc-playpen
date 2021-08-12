@@ -307,3 +307,9 @@ export interface IPlaybookJsonOutlineSteps {
 	title : string;
 	total_tests: number;
 }
+
+export type ITransformedPlaybook = {
+    cats: IPlaybookCategory[];
+    scenes: IPlaybookScene[];
+    steps: ITransformedStep[];
+};

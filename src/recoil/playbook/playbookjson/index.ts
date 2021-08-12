@@ -27,10 +27,11 @@ import {
     ITest,
     ICodePanel,
     IVideo,
-    ITransformedStep
+    ITransformedStep,
+    ITransformedPlaybook,
 } from '../../../models';
 
-import { GetProps, SetProps } from '../../types';
+import { GetProps, isDefault, SetProps } from '../../types';
 
 export const playbookAuthourState = atom<string>({
     key: 'playbookAuthourState',
@@ -96,240 +97,251 @@ export const playbookJsonState = atom({
         atomEffect,
     ],
 });
-type ITransformedPlaybook = {
-    cats: IPlaybookCategory[];
-    scenes: IPlaybookScene[];
-    steps: ITransformedStep[];
-};
-export const transformedPlaybookState = selector<ITransformedPlaybook>({
-    key: 'transformedPlaybookState',
-    get: ({ get }: GetProps): ITransformedPlaybook => {
-        const playbookJson: IPlaybookJson = get(playbookJsonState);
-        const cats: IPlaybookCategory[] = [];
-        const scenes: IPlaybookScene[] = [];
-        const steps: ITransformedStep[] = [];
 
-        /**
-         * @step Categories
-         */
-        const playbookCats = playbookJson.categories || [];
-        if (playbookCats) {
-            for (let catIndex = 0; catIndex < playbookCats.length; catIndex++) {
-                const cat = playbookCats[catIndex];
-                cat._uuid = uuid();
+export const transformedPlaybookState = atom({
+    key: `transformedPlaybookState`,
+    default: selector<ITransformedPlaybook>({
+        key: 'transformedPlaybookState/default',
+        get: ({ get }: GetProps): ITransformedPlaybook => {
+            const playbookJson: IPlaybookJson = get(playbookJsonState);
+            const cats: IPlaybookCategory[] = [];
+            const scenes: IPlaybookScene[] = [];
+            const steps: ITransformedStep[] = [];
 
-                /**
-                 * @step Scenes
-                 */
-                const catScenes = cat.scenes;
-                if (catScenes) {
-                    for (
-                        let sceneIndex = 0;
-                        sceneIndex < catScenes.length;
-                        sceneIndex++
-                    ) {
-                        const scene = catScenes[sceneIndex];
-                        scene.catId = cat.id;
-                        scene._uuid = uuid();
+            /**
+             * @step Categories
+             */
+            const playbookCats = playbookJson.categories || [];
+            if (playbookCats) {
+                for (let catIndex = 0; catIndex < playbookCats.length; catIndex++) {
+                    const cat = playbookCats[catIndex];
+                    cat._uuid = uuid();
 
-                        /**
-                         * @step Steps
-                         */
-                        const sceneSteps = scene.steps;
-                        if (sceneSteps) {
-                            for (
-                                let sceneIndex = 0;
-                                sceneIndex < sceneSteps.length;
-                                sceneIndex++
-                            ) {
-                                const step = sceneSteps[sceneIndex];
-                                step.catId = cat.id;
-                                step.sceneId = scene.id;
-                                step._uuid = uuid();
+                    /**
+                     * @step Scenes
+                     */
+                    const catScenes = cat.scenes;
+                    if (catScenes) {
+                        for (
+                            let sceneIndex = 0;
+                            sceneIndex < catScenes.length;
+                            sceneIndex++
+                        ) {
+                            const scene = catScenes[sceneIndex];
+                            scene.catId = cat.id;
+                            scene._uuid = uuid();
 
-                                /**
-                                 * @step Timelines
-                                 */
-                                const stepTimeline = step.timeline;
-                                const descPanels: IDescription[] = [];
-                                const codePanels: ICodePanel[] = [];
-                                const testPanels: ITest[] = [];
-                                const browserPanels: IBrowser[] = [];
-                                const cliPanels: ITerminal[] = [];
-                                const spreadsheetPanels: ISpreadsheet[] = [];
-                                const audioPanels: IAudio[] = [];
-                                const videoPanels: IVideo[] = [];
+                            /**
+                             * @step Steps
+                             */
+                            const sceneSteps = scene.steps;
+                            if (sceneSteps) {
                                 for (
-                                    let timelineIndex = 0;
-                                    timelineIndex < stepTimeline.length;
-                                    timelineIndex++
+                                    let sceneIndex = 0;
+                                    sceneIndex < sceneSteps.length;
+                                    sceneIndex++
                                 ) {
-                                    const panel: ITimeline =
-                                        stepTimeline[timelineIndex];
-                                    let time: ITime = {
-                                        _uuid: uuid(),
-                                        id: panel.id, // <--- @todo override the id with a universally unique id
-                                        start: panel.start,
-                                        duration: panel.duration
-                                    };
-                                    if (panel.end) {
-                                        time.end = panel.end;
-                                    }
-                                    switch (panel.panel) {
-                                        case 'description':
-                                            if (
-                                                !panel.hasOwnProperty(
-                                                    'description'
-                                                )
-                                            )
-                                                throw new Error(
-                                                    'Description panel is missing the description block'
-                                                );
-                                            descPanels.push({
-                                                ...time,
-                                                description: panel.description!
-                                            });
-                                            break;
-                                        case 'code':
-                                            if (!panel.hasOwnProperty('code'))
-                                                throw new Error(
-                                                    'Code panel is missing the code block'
-                                                );
-                                            codePanels.push({
-                                                ...time,
-                                                ...panel.code!
-                                            });
-                                            break;
-                                        case 'test':
-                                            if (!panel.hasOwnProperty('test'))
-                                                throw new Error(
-                                                    'Test panel is missing the test block'
-                                                );
-                                            testPanels.push({
-                                                ...time,
-                                                ...panel.test!
-                                            });
-                                            break;
-                                        case 'browser':
-                                            if (
-                                                !panel.hasOwnProperty('browser')
-                                            )
-                                                throw new Error(
-                                                    'Browser panel is missing the browser block'
-                                                );
-                                            if (
-                                                !panel.browser!.hasOwnProperty(
-                                                    'url'
-                                                )
-                                            )
-                                                throw new Error(
-                                                    'Browser panel is missing a "url" for the browser block'
-                                                );
-                                            browserPanels.push({
-                                                ...time,
-                                                url: panel.browser!.url
-                                            });
-                                            break;
-                                        case 'terminal':
-                                            if (
-                                                !panel.hasOwnProperty(
-                                                    'terminal'
-                                                )
-                                            )
-                                                throw new Error(
-                                                    'Terminal panel is missing the terminal block'
-                                                );
-                                            cliPanels.push({
-                                                ...time,
-                                                ...panel.terminal!
-                                            });
-                                            break;
-                                        case 'audio':
-                                            if (!panel.hasOwnProperty('audio'))
-                                                throw new Error(
-                                                    'Audio panel is missing the audio block'
-                                                );
-                                            audioPanels.push({
-                                                ...time,
-                                                ...panel.audio!
-                                            });
-                                            break;
-                                        case 'video':
-                                            if (!panel.hasOwnProperty('video'))
-                                                throw new Error(
-                                                    'Video panel is missing the video block'
-                                                );
-                                            videoPanels.push({
-                                                ...time,
-                                                ...panel.video!
-                                            });
-                                            break;
-                                        case 'spreadsheet':
-                                            if (
-                                                !panel.hasOwnProperty(
-                                                    'spreadsheet'
-                                                )
-                                            )
-                                                throw new Error(
-                                                    'Spreadsheet panel is missing the spreadsheet block'
-                                                );
-                                            spreadsheetPanels.push({
-                                                ...time,
-                                                spreadsheet: panel.spreadsheet!
-                                            });
-                                            break;
-                                        default:
-                                            throw new Error(
-                                                'The Playbook Json has a panel that I do not recognize: ' +
-                                                    panel.panel
-                                            );
-                                    }
-                                }
+                                    const step = sceneSteps[sceneIndex];
+                                    step.catId = cat.id;
+                                    step.sceneId = scene.id;
+                                    // step._uuid = uuid();
 
-                                /**
-                                 * @step Step
-                                 */
-                                const transformedStep: ITransformedStep = {
-                                    catId: cat.id,
-                                    sceneId: scene.id,
-                                    id: step.id,
-                                    title: step.title,
-                                    duration: step.duration,
-                                    gitData: step.gitData,
-                                    windowSettings: step.windowSettings,
-                                    timeline: step.timeline,
                                     /**
-                                     * @timeline
+                                     * @step Timelines
                                      */
-                                    descPanels,
-                                    codePanels,
-                                    testPanels,
-                                    browserPanels,
-                                    cliPanels,
-                                    spreadsheetPanels,
-                                    audioPanels,
-                                    videoPanels
-                                };
-                                steps.push(transformedStep);
+                                    const stepTimeline = step.timeline;
+                                    const descPanels: IDescription[] = [];
+                                    const codePanels: ICodePanel[] = [];
+                                    const testPanels: ITest[] = [];
+                                    const browserPanels: IBrowser[] = [];
+                                    const cliPanels: ITerminal[] = [];
+                                    const spreadsheetPanels: ISpreadsheet[] = [];
+                                    const audioPanels: IAudio[] = [];
+                                    const videoPanels: IVideo[] = [];
+                                    for (
+                                        let timelineIndex = 0;
+                                        timelineIndex < stepTimeline.length;
+                                        timelineIndex++
+                                    ) {
+                                        const panel: ITimeline =
+                                            stepTimeline[timelineIndex];
+                                        let time: ITime = {
+                                            _uuid: uuid(),
+                                            id: panel.id, // <--- @todo override the id with a universally unique id
+                                            start: panel.start,
+                                            duration: panel.duration
+                                        };
+                                        if (panel.end) {
+                                            time.end = panel.end;
+                                        }
+                                        switch (panel.panel) {
+                                            case 'description':
+                                                if (
+                                                    !panel.hasOwnProperty(
+                                                        'description'
+                                                    )
+                                                )
+                                                    throw new Error(
+                                                        'Description panel is missing the description block'
+                                                    );
+                                                descPanels.push({
+                                                    ...time,
+                                                    description: panel.description!
+                                                });
+                                                break;
+                                            case 'code':
+                                                if (!panel.hasOwnProperty('code'))
+                                                    throw new Error(
+                                                        'Code panel is missing the code block'
+                                                    );
+                                                codePanels.push({
+                                                    ...time,
+                                                    ...panel.code!
+                                                });
+                                                break;
+                                            case 'test':
+                                                if (!panel.hasOwnProperty('test'))
+                                                    throw new Error(
+                                                        'Test panel is missing the test block'
+                                                    );
+                                                testPanels.push({
+                                                    ...time,
+                                                    ...panel.test!
+                                                });
+                                                break;
+                                            case 'browser':
+                                                if (
+                                                    !panel.hasOwnProperty('browser')
+                                                )
+                                                    throw new Error(
+                                                        'Browser panel is missing the browser block'
+                                                    );
+                                                if (
+                                                    !panel.browser!.hasOwnProperty(
+                                                        'url'
+                                                    )
+                                                )
+                                                    throw new Error(
+                                                        'Browser panel is missing a "url" for the browser block'
+                                                    );
+                                                browserPanels.push({
+                                                    ...time,
+                                                    url: panel.browser!.url
+                                                });
+                                                break;
+                                            case 'terminal':
+                                                if (
+                                                    !panel.hasOwnProperty(
+                                                        'terminal'
+                                                    )
+                                                )
+                                                    throw new Error(
+                                                        'Terminal panel is missing the terminal block'
+                                                    );
+                                                cliPanels.push({
+                                                    ...time,
+                                                    ...panel.terminal!
+                                                });
+                                                break;
+                                            case 'audio':
+                                                if (!panel.hasOwnProperty('audio'))
+                                                    throw new Error(
+                                                        'Audio panel is missing the audio block'
+                                                    );
+                                                audioPanels.push({
+                                                    ...time,
+                                                    ...panel.audio!
+                                                });
+                                                break;
+                                            case 'video':
+                                                if (!panel.hasOwnProperty('video'))
+                                                    throw new Error(
+                                                        'Video panel is missing the video block'
+                                                    );
+                                                videoPanels.push({
+                                                    ...time,
+                                                    ...panel.video!
+                                                });
+                                                break;
+                                            case 'spreadsheet':
+                                                if (
+                                                    !panel.hasOwnProperty(
+                                                        'spreadsheet'
+                                                    )
+                                                )
+                                                    throw new Error(
+                                                        'Spreadsheet panel is missing the spreadsheet block'
+                                                    );
+                                                spreadsheetPanels.push({
+                                                    ...time,
+                                                    spreadsheet: panel.spreadsheet!
+                                                });
+                                                break;
+                                            default:
+                                                throw new Error(
+                                                    'The Playbook Json has a panel that I do not recognize: ' +
+                                                        panel.panel
+                                                );
+                                        }
+                                    }
+
+                                    /**
+                                     * @step Step
+                                     */
+                                    const transformedStep: ITransformedStep = {
+                                        _uuid: uuid(),
+                                        catId: cat.id,
+                                        sceneId: scene.id,
+                                        id: step.id,
+                                        title: step.title,
+                                        duration: step.duration,
+                                        gitData: step.gitData,
+                                        windowSettings: step.windowSettings,
+                                        timeline: step.timeline.map(time => {
+                                            return {
+                                                ...time,
+                                                _uuid: uuid(),
+                                            }
+                                        }),
+                                        /**
+                                         * @timeline
+                                         */
+                                        descPanels,
+                                        codePanels,
+                                        testPanels,
+                                        browserPanels,
+                                        cliPanels,
+                                        spreadsheetPanels,
+                                        audioPanels,
+                                        videoPanels
+                                    };
+                                    console.log('--->transformedStep', {step, transformedStep})
+                                    steps.push(transformedStep);
+                                }
                             }
+
+                            delete scene.steps;
+                            scenes.push(scene);
                         }
-
-                        delete scene.steps;
-                        scenes.push(scene);
                     }
+                    delete cat.scenes;
+                    cats.push(cat);
                 }
-                delete cat.scenes;
-                cats.push(cat);
             }
-        }
 
-        return {
-            cats,
-            scenes,
-            steps
-        };
-    },
-    set: ({get,set}: SetProps, updatedPlaybook: ITransformedPlaybook | DefaultValue) => {
+            return {
+                cats,
+                scenes,
+                steps
+            };
+        },
+        set: ({get,set}: SetProps, updatedPlaybook: ITransformedPlaybook | DefaultValue) => {
+            if(updatedPlaybook && !isDefault(updatedPlaybook)){
+                console.log(`transformedPlaybookState`, {
+                    updatedPlaybook,
+                });
 
-    },
-});
+            }
+        },
+    }),
+})
