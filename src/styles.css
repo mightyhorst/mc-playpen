@@ -40,7 +40,6 @@ label > p{
 }
 input, select, textarea{
   display: flex;
-  flex: 1 1;
   border: 1px solid rgba(0,0,0,.1);
   border-radius: 4px;
   background: white;
@@ -48,6 +47,14 @@ input, select, textarea{
   box-shadow: 0 0 1px 1px rgb(255 255 255);
   -webkit-font-smoothing: antialiased;
   font-weight: 600;
+}
+label > input, 
+label > select, 
+label > pre, 
+label > textarea
+{
+  width: calc(100% - 200px);
+  flex: 1 1;
 }
 input, select{
   line-height: 25px;
@@ -77,12 +84,67 @@ main{
 }
 aside{
   display: block;
-  flex: 0 0 50%;
+  flex: 0 1 40%;
   height: 100%;
-  width: 50%;
+  width: 40%;
   box-shadow: -1px -1px 5px rgb(0 0 0 / 50%);
   background: rgba(0,0,0,.5);
   padding: 20px;
   overflow: scroll;
   border: 1px solid rgb(0 0 0 / 20%);
+}
+nav {
+  display: flex;
+  flex-direction: column;
+  flex: 0 0 10%;
+  background: hsl(210deg 11% 11% / 60%);
+  border-right: 1px solid rgba(0,0,0,.2);
+}
+nav a{
+  display: flex;
+  width: 100%;
+  height: 50px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  text-decoration: none;
+  color: white;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+}
+nav a:hover{
+  color: #03a9f4 !important;
+}
+nav a:nth-of-type(odd){
+  background: rgba(0,0,0,.1);
+}
+nav a:nth-of-type(even){
+    background: rgba(0,0,0,.2);
+}
+nav a:nth-of-type(1){
+  border-top: 1px solid rgba(255,255,255,.1);
+}
+
+nav h3, 
+nav h4 
+{
+  border-bottom: 1px solid rgba(0,0,0,.2);
+  font-size: 10px;
+  display: flex;
+  padding: 0px 10px;
+  height: 40px;
+  align-items: center;
+  text-transform: uppercase;
+  background: rgba(0,0,0,.3);
+}
+.accordion{
+  display: block;
+}
+.accordion-body {
+  display: block;
+  overflow: hidden;
+  transition: max-height 0.2s;
+  max-height: 0px;
+  max-height: 100vh;
 }

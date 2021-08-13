@@ -3,6 +3,12 @@ import {
     Suspense,
     ChangeEvent as ReactChangeEvent,
 } from 'react';
+import {
+    HashRouter as Router,
+    Switch,
+    Route,
+    Link
+  } from "react-router-dom";
 import { 
     useRecoilState,
     useRecoilValue, 
@@ -23,7 +29,10 @@ import {
 } from '../recoil';
 import {
     log,
+    ListDescription,
     CreateDescription,
+    ShowDescription,
+    UpdateDescription,
 } from './Playbook';
 
 
@@ -35,9 +44,39 @@ export function RecoilDebug(){
     const currentFile = useRecoilValue(currentFileState);
     const [file, setFile] = useRecoilState<IFile>(getFile('https://610b8f8a2b6add0017cb392b.mockapi.io/template-hbs'));
     const [code, setCode] = useRecoilState(getCodeTimelineById( '2' || codePanels[0].id ));
-    return (<>
+    return (<Router>
+        <nav>
+            <div className='accordion'>
+                <h3> Description </h3>
+                <div className='accordion-body'>
+                    <Link to='/description'>
+                        List Description 
+                    </Link>
+                    <Link to='/description/create'>
+                        Create Description 
+                    </Link>
+                    <Link to='/description/update'>
+                        Update Description 
+                    </Link>
+                    <Link to='/description/show'>
+                        Show Description 
+                    </Link>
+                </div>
+            </div>
+        </nav>
         <main>
-            <CreateDescription />
+                <Route exact path='/description'>
+                    <ListDescription /> 
+                </Route>
+                <Route exact path='/description/create'>
+                    <CreateDescription />
+                </Route>
+                <Route exact path='/description/update'>
+                    <UpdateDescription />
+                </Route>
+                <Route exact path='/description/:id'>
+                    <ShowDescription />
+                </Route>
         </main>
         <aside>
             <h3>currentStep</h3>
@@ -103,7 +142,7 @@ export function RecoilDebug(){
                 </pre>
             </section>
         </aside>
-    </>);
+    </Router>);
 }
 export function RecoilDebugSuspense(){
     return (

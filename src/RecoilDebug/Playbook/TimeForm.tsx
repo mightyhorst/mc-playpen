@@ -30,9 +30,9 @@ export function TimeForm({
             <p>
                 _uuid 
             </p>
-            <span>
+            <pre>
                 {_uuid}
-            </span>
+            </pre>
         </label>
         <label >
             <p>
@@ -44,13 +44,13 @@ export function TimeForm({
             <p>
                 start 
             </p>
-            <input type="text" defaultValue={start} onChange={(e) => changeStart(parseInt(e.target.value))} />
+            <input type="text" defaultValue={start} onChange={(e) => changeStart(parseInt(e.target.value, 10))} />
         </label>
         <label >
             <p>
                 duration 
             </p>
-            <input type="text" defaultValue={duration} onChange={(e) => changeDuration(parseInt(e.target.value))} />
+            <input type="text" defaultValue={duration} onChange={(e) => changeDuration(parseInt(e.target.value, 10))} />
         </label>
     </>)
 }
@@ -59,7 +59,7 @@ export default function TimeFormContainer(props:TimeFormProps){
     const timeForm = (
         props.timeline ? 
             <TimeForm {...props} />: 
-            'loading...'
+            <label> <pre> 'loading...' </pre> </label>
     );
 
     const [currentStepId, setStepId]= useRecoilState(showStepIdState);

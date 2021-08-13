@@ -37,7 +37,9 @@ export const listDescriptionsState = selector<ITimeline[]>({
         return descriptionPanels;
     },
     set: ({ get, set, reset, }:SetProps, updatedTimeline:ITimeline[] | DefaultValue) => {
-        set(listTimelineState, updatedTimeline);
+        if(updatedTimeline && !isDefault(updatedTimeline)){
+            set(listTimelineState, updatedTimeline);
+        }
     },
 });
 
@@ -51,12 +53,12 @@ export const findDescriptionById = selectorFamily<ITimeline | null, string>({
         { get, set }: SetProps,
         updatedDesc: ITimeline | DefaultValue | null,
     ) => {
-        // const steps = get(listStepsState);
         if (updatedDesc && !isDefault(updatedDesc)) {
             console.log(`findDescriptionById`, {
                 descPanelId,
                 updatedDesc,
             });
+            // const steps = get(listStepsState);
             // const step = steps.find((step) => step._uuid === updatedDesc.stepUuid);
             // const filteredTimelines =
             //     step?.timeline.filter(
@@ -108,8 +110,11 @@ export const createDescriptionState = selector<ITimeline | null>({
     ): void => {
         if(!isDefault(createdDesc) && createdDesc){
             const descriptions:ITimeline[] = get(listDescriptionsState);
-            descriptions.push(<ITimeline>createdDesc);
-            set(listDescriptionsState, descriptions);
+            const newDescriptions:ITimeline[] = [
+                ...descriptions,
+                <ITimeline>createdDesc,
+            ];
+            set(listDescriptionsState, newDescriptions);
         }
     },
 });
