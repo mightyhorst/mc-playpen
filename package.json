@@ -1,7 +1,12 @@
 {
-  "name": "mc-playpen",
+  "private": true, 
+  "name": "@master-class/root",
+  "workspaces": [
+    "workspaces/apps/*",
+    "workspaces/components/*"
+  ],
   "version": "1.0.0",
-  "description": "",
+  "description": "masterclass playpen",
   "keywords": [],
   "main": "src/index.tsx",
   "dependencies": {

@@ -73,8 +73,8 @@ export default function App({children}: {children?: ReactNode}) {
   }
   return (
     <RecoilRoot>
-      <RecoilDebug />
-      {/* <RecordingProvider>
+      {/* <RecoilDebug /> */}
+      <RecordingProvider>
         <RecordingTimerProvider>
           <TimerProvider
             initCurrentTime={0}
@@ -93,7 +93,7 @@ export default function App({children}: {children?: ReactNode}) {
             </section>
           </TimerProvider>
         </RecordingTimerProvider>
-      </RecordingProvider> */}
+      </RecordingProvider>
     </RecoilRoot>
   );
 }
